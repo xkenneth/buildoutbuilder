@@ -1,0 +1,8 @@
+<p>
+	Welcome to the Buildout Builder test site! The Buildout Builder is a GSOC project mentored by the Plone Foundation. The Buildout Builder is currently in Phase 1 of development.
+<p>
+
+Major features of each phase:<br>
+  <li>Phase One: Distribution of pre-configured buildouts.</li><br>
+  <li>Phase Two: Custom configuration of plone-centric buildouts.</li><br>
+  <li>Phase Three: Custom buildout construction.</li><br>

@@ -1,0 +1,40 @@
+<div id="buildoutview">
+<p tal:content="python:view.__parent__.buildout">Buildouts</p>
+<p tal:condition="python: not(view.manager)">No Buildout!</p>
+<p tal:condition="view/manager">
+  Eggs
+  <li tal:repeat="item view/manager/eggs">
+    <p tal:content="item"/>
+  </li>   
+</p>
+<p tal:condition="view/manager">
+  Find-Links
+  <li tal:repeat="item view/manager/find_links">
+    <p tal:content="item"/>
+  </li>
+</p>
+
+<p tal:condition="view/manager">
+  Develop-Dirs
+  <li tal:repeat="item view/manager/develop_dirs">
+    <p tal:content="item"/>
+  </li>
+</p>
+
+<div tal:condition="view/manager">
+  Parts
+  <div tal:repeat="part view/manager/parts">
+    <h3 tal:content="python: view.manager.parts[part]">Part</h3>
+    <div tal:repeat="option python: view.manager.parts[part].options">
+      <span tal:content="option"/> 
+      = 
+      <p tal:repeat="sub python: view.manager.parts[part].options[option]">
+	<span tal:repeat="subpart sub">
+	  <span tal:content="subpart"/>
+	</span>
+      </p>
+    </div>
+  </div>
+
+
+</div>

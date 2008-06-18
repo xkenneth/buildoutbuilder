@@ -1,0 +1,12 @@
+<div class="portlet">
+    <p>
+	Buildouts
+    </p>
+    <ul>
+        <li tal:repeat="item view/buildouts">
+            <a href="#"
+                tal:content="item/buildout"
+                tal:attributes="href item/url" />
+        </li>
+    </ul>
+</div>

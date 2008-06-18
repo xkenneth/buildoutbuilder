@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta tal:attributes="http-equiv string:Content-Type;
+                        content string:text/html;;charset=utf-8" />
+</head>
+<body>
+  <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+  <div class="contentf">
+    
+    <table id="mainlayout">
+      <tr>
+	<td colspan="2"> 
+	  <div id="header">
+	    <tal:header content="structure provider:header" />
+	  </div>
+	</td>
+      </tr>
+
+      <tr>
+	<td valign="top" width="30%">
+	  <b class="lb1f"></b><b class="lb2f"></b><b class="lb3f"></b><b class="lb4f"></b>
+	  <div class="contentl">
+	    <div id="left">
+	      <tal:left content="structure provider:left" />
+	    </div>
+	  </div>
+	  <b class="lb4f"></b><b class="lb3f"></b><b class="lb2f"></b><b class="lb1f"></b>
+	</td>
+
+	<td valign="top">
+	  <b class="mb1f"></b><b class="mb2f"></b><b class="mb3f"></b><b class="mb4f"></b>
+	  <div class="contentm">
+	    <div id="main">
+	      <tal:main content="structure provider:main" />
+	    </div>
+	  </div>
+	  <b class="mb4f"></b><b class="mb3f"></b><b class="mb2f"></b><b class="mb1f"></b>
+	</td>
+
+      </tr>
+    </table>
+  </div>
+  <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+  
+</body>
+</html>

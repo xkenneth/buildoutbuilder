@@ -1,0 +1,37 @@
+body { background-color: #737373; }
+     
+#header { width: 100%; }
+#left { padding:1em; }
+#main { padding: 1em; }
+#menu {
+      padding-left: 1em;
+}
+#footer { heighxt: 50px; padding: 1em; }
+#adminbar { padding-left: 22%; margin-top: 60px; }
+.portlet { border-style: none; margin-bottom: 2em; padding: 1em; }
+
+#title {
+       font-weight: bold;
+       color: #fff;
+       border-width: 1px;
+       font-variant: normal;
+}
+
+#titlespace {
+	            padding: 1em;
+}
+
+#mainlayout { width: 98%; }
+
+.menulink A:link {text-decoration: none;
+       color: #fff;
+}
+.menulink A:visited {text-decoration: none;
+	    color: #fff;
+}
+.menulink A:active {text-decoration: none;
+	   color: #fff;
+}
+.menulink A:hover {text-decoration: none;
+	  color: #ccc;
+}
