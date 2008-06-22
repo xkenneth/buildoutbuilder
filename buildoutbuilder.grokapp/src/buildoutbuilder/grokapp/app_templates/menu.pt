@@ -2,6 +2,7 @@
   <div id="menu" class="menulink">	
     <a tal:attributes="href python:view.url('index')">Home</a>
     <a tal:attributes="href python:view.url('buildouts')">Buildouts</a>
+    <a tal:attributes="href python:view.url('createbuildout')">Create Buildout</a>
   </div>
 </div>
 <b class="b4bh"></b>

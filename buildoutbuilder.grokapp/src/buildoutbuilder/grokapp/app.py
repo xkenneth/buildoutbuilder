@@ -6,6 +6,8 @@ import re
 import tarfile
 import cStringIO
 
+from megrok.kss import KSSActions
+
 from zope.component import getMultiAdapter
 from zope.interface import Interface
 from zope.schema import TextLine
@@ -15,20 +17,19 @@ from buildoutbuilder.managers.errors import *
 from buildoutbuilder.grokapp import utils
 
 BUILDOUTS_FOLDER = 'buildouts'
+editable_buildout = None
 
 buildout_re = re.compile('.*.cfg$')
 tar_re = re.compile('.*.tar.gz')
 
-#grok.context(Interface) #not sure what this line does? -KCM
 
-def get_application(context):
-    obj = context
-    while not isinstance(obj, BuildoutBuilder):
-        obj = obj.__parent__
-    return obj
-
+    
 class BuildoutBuilder(grok.Application, grok.Container):
     pass
+    #def traverse(self, name):
+    #    print name
+        #if name == 'buildouts':
+        #    return BuildoutDir()
 
 #header viewlet manager
 class Header(grok.ViewletManager):
@@ -61,6 +62,10 @@ class Menu(grok.Viewlet):
 
 class Index(grok.View):
     pass
+
+class CreateBuildout(grok.View):
+    grok.context(BuildoutBuilder)
+    grok.template('index')
 
 class Buildouts(grok.View):
     grok.context(BuildoutBuilder)
@@ -108,6 +113,7 @@ class Buildouts(grok.View):
                     valid_buildouts.append({'toplevel':buildout,
                                             'buildouts':buildout_files})
         self.buildouts = valid_buildouts
+        pdb.set_trace()
     
 class Intro(grok.Viewlet):
     grok.viewletmanager(MainContent)
@@ -117,11 +123,39 @@ class Intro(grok.Viewlet):
     #def render(self):
     #    return 'Hello!'
 
+class EditBuildout(grok.Viewlet):
+    grok.viewletmanager(MainContent)
+    grok.context(BuildoutBuilder)
+    grok.view(CreateBuildout)
+    grok.template('buildoutview')
+
+    buildout_editable = True
+    
+    def update(self):
+        pass
+
+class AppKSS(KSSActions):
+    def presentFindLinkForm(self):
+        new_find_link_form = """<form><input type="text" name="newfindlink"><input type="submit" value="Add" id="add_find_link_submit"></form>"""
+
+        core = self.getCommandSet('core')
+        core.replaceHTML('#show_add_find_link_form', new_find_link_form)
+    
+    def addFindLink(self):
+        pass
+        #for field, value in self.request.form.items():
+        #   if field == u'newfindlink':
+        #        self.context.buildoutmanager.find_links.append(value)
+        #print self.context
+
+
 class BuildoutView(grok.Viewlet):
     grok.viewletmanager(MainContent)
     grok.context(BuildoutBuilder)
     grok.view(Buildouts)
 
+    buildout_editable = False
+    
     def update(self):
         buildout_uid = self.__parent__.buildout
         buildouts = self.__parent__.buildouts
@@ -129,7 +163,7 @@ class BuildoutView(grok.Viewlet):
         buildout = None
         count = 0
 
-        self.manager = None
+        self.buildoutmanager = None
 
         if buildout_uid is not None:
             for toplevel in buildouts:
@@ -139,7 +173,7 @@ class BuildoutView(grok.Viewlet):
                         buildout = bo
                         break
             
-            self.manager = buildout['manager']
+            self.buildoutmanager = buildout['manager']
 
             
         

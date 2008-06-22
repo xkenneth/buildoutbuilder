@@ -3,6 +3,8 @@
 <head>
 <meta tal:attributes="http-equiv string:Content-Type;
                         content string:text/html;;charset=utf-8" />
+<tal:kss_javascript replace="structure context/@@kss_javascript" />
+<link tal:attributes="href static/kss/app.kss" rel="kinetic-stylesheet" type="text/kss" />
 </head>
 <body>
   <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>

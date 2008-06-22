@@ -5,13 +5,14 @@ import os.path
 import StringIO
 
 class BuildoutManager:
-    def __init__(self,uri):
+    def __init__(self,uri=None):
         """Initializes a buildoutmanager from a buildout located by a URI"""
         
         from buildoutbuilder.managers.PartManager import PartManager
         from buildoutbuilder.managers.Egg import Egg
         
-        self.uri = uri #save the URI
+        if uri is not None:
+            self.uri = uri #save the URI
         
         #a container for our eggs
         self.eggs = []
@@ -27,52 +28,49 @@ class BuildoutManager:
 
         #start the configparser
         cp = ConfigParser.ConfigParser() 
-
-        #attempt to read the buildout
-        #if not os.path.isfile(uri):
-            #see if the uri is a string
+        
+        if uri is not None:
+            files = cp.read(uri)
             
-        files = cp.read(uri)
-        
-        try:
-            files.index(uri)
-        except ValueError:
-            cp.readfp(StringIO.StringIO(uri))
+            try:
+                files.index(uri)
+            except ValueError:
+                cp.readfp(StringIO.StringIO(uri))
         
 
-        #check to make sure that a buildout section is present
-        if not cp.has_section('buildout'):
-            raise MissingPart('buildout')
+            #check to make sure that a buildout section is present
+            if not cp.has_section('buildout'):
+                raise MissingPart('buildout')
             
-        #get the sections from the configParser
-        sections = cp._sections.keys()
-        #we don't need th buildout section
-        sections.pop(cp._sections.keys().index('buildout'))
+            #get the sections from the configParser
+            sections = cp._sections.keys()
+            #we don't need th buildout section
+            sections.pop(cp._sections.keys().index('buildout'))
         
-        #for each part defined, create a partManagerObject
-        for section in sections:
-            self.parts[section] = PartManager(section,cp._sections[section])
+            #for each part defined, create a partManagerObject
+            for section in sections:
+                self.parts[section] = PartManager(section,cp._sections[section])
         
-        #get and find all of the eggs
-        #if the eggs are specified, is this mandatory?
-        if cp.has_option('buildout','eggs'):
-            #for every defined egg
-            for egg_name in cp.get('buildout','eggs').split():
-                self.eggs.append(Egg(egg_name)) #create and save the egg
+            #get and find all of the eggs
+            #if the eggs are specified, is this mandatory?
+            if cp.has_option('buildout','eggs'):
+                #for every defined egg
+                for egg_name in cp.get('buildout','eggs').split():
+                    self.eggs.append(Egg(egg_name)) #create and save the egg
 
-        #get and find all of the find-links
-        if cp.has_option('buildout','find-links'):
-            for link_name in cp.get('buildout','find-links').split():
-                self.find_links.append(link_name)
+            #get and find all of the find-links
+            if cp.has_option('buildout','find-links'):
+                for link_name in cp.get('buildout','find-links').split():
+                    self.find_links.append(link_name)
 
-        #get all of the dev dirs
-        if cp.has_option('buildout','develop'):
-            for develop_dir in cp.get('buildout','develop').split():
-                self.develop_dirs.append(develop_dir)
+            #get all of the dev dirs
+            if cp.has_option('buildout','develop'):
+                for develop_dir in cp.get('buildout','develop').split():
+                    self.develop_dirs.append(develop_dir)
                                       
             
         
-        self.cp = cp
+            self.cp = cp
 
     def render(self,uri):
 
