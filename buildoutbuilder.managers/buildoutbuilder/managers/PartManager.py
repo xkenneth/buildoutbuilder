@@ -1,6 +1,7 @@
 import re
 from buildoutbuilder.managers.Link import Link
 from buildoutbuilder.managers.Link import link_re_capture
+from buildoutbuilder.managers.errors import *
 private_re = re.compile('__.*__')
 
 class PartManager:
@@ -22,9 +23,12 @@ class PartManager:
         
         
         
-        
+        #do i need this?
         #check to make sure that we've got a recipe
-        options['recipe']
+        #try:
+        #    options['recipe']
+        #except KeyError:
+        #    raise PartIsNotRecipe(section_name)
         
         
         #find and create the links

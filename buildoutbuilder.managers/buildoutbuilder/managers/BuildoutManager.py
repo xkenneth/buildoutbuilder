@@ -1,4 +1,8 @@
 import ConfigParser
+from errors import *
+import pdb
+import os.path
+import StringIO
 
 class BuildoutManager:
     def __init__(self,uri):
@@ -25,11 +29,20 @@ class BuildoutManager:
         cp = ConfigParser.ConfigParser() 
 
         #attempt to read the buildout
-        cp.read(uri)
+        #if not os.path.isfile(uri):
+            #see if the uri is a string
+            
+        files = cp.read(uri)
+        
+        try:
+            files.index(uri)
+        except ValueError:
+            cp.readfp(StringIO.StringIO(uri))
+        
 
         #check to make sure that a buildout section is present
         if not cp.has_section('buildout'):
-            raise ValueError('Buildout has no section ','buildout')
+            raise MissingPart('buildout')
             
         #get the sections from the configParser
         sections = cp._sections.keys()

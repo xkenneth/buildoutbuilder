@@ -1,5 +1,4 @@
 <div id="buildoutview">
-<p tal:content="python:view.__parent__.buildout">Buildouts</p>
 <p tal:condition="python: not(view.manager)">No Buildout!</p>
 <p tal:condition="view/manager">
   Eggs
