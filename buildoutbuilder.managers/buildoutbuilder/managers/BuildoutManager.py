@@ -35,7 +35,8 @@ class BuildoutManager:
             try:
                 files.index(uri)
             except ValueError:
-                cp.readfp(StringIO.StringIO(uri))
+                buffer = StringIO.StringIO(uri)
+                cp.readfp(buffer)
         
 
             #check to make sure that a buildout section is present

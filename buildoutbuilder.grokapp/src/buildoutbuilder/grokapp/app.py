@@ -16,6 +16,8 @@ from buildoutbuilder.managers.BuildoutManager import BuildoutManager
 from buildoutbuilder.managers.errors import *
 from buildoutbuilder.grokapp import utils
 
+from persistent.mapping import PersistentMapping
+
 BUILDOUTS_FOLDER = 'buildouts'
 editable_buildout = None
 
@@ -23,24 +25,32 @@ buildout_re = re.compile('.*.cfg$')
 tar_re = re.compile('.*.tar.gz')
 
 
+class Buildout(grok.Model):
+    def __init__(self,manager):
+        self.manager = manager
+
+class BuildoutIndex(grok.View):
+    grok.context(Buildout)
+    grok.template('buildoutview')
+    grok.name('index')
+    
     
 class BuildoutBuilder(grok.Application, grok.Container):
     pass
-    #def traverse(self, name):
-    #    print name
-        #if name == 'buildouts':
-        #    return BuildoutDir()
 
 #header viewlet manager
 class Header(grok.ViewletManager):
+    grok.context(BuildoutBuilder)
     grok.name('header')
 
 #left side bar viewlet manager
 class LeftSidebar(grok.ViewletManager):
+    grok.context(BuildoutBuilder)
     grok.name('left')
 
 #main content viewlet manager
 class MainContent(grok.ViewletManager):
+    grok.context(BuildoutBuilder)
     grok.name('main')
 
 #main app css
@@ -53,15 +63,17 @@ class RoundedCornersCSS(grok.Viewlet):
     grok.context(BuildoutBuilder)
 
 class Title(grok.Viewlet):
+    grok.context(BuildoutBuilder)
     grok.viewletmanager(Header)
     grok.order(1)
 
 class Menu(grok.Viewlet):
+    grok.context(BuildoutBuilder)
     grok.viewletmanager(Header)
     grok.order(2)
 
 class Index(grok.View):
-    pass
+    grok.context(BuildoutBuilder)
 
 class CreateBuildout(grok.View):
     grok.context(BuildoutBuilder)
@@ -80,6 +92,7 @@ class Buildouts(grok.View):
         if os.path.isdir(buildout_dir):
             uid = 0
             buildouts = dircache.listdir(buildout_dir)
+            pdb.set_trace()
             for buildout in buildouts:
                 if tar_re.match(buildout) is not None:
                     buildout_files = []
@@ -89,7 +102,6 @@ class Buildouts(grok.View):
                             try:
                                 manager = BuildoutManager(tar.extractfile(f.name).read())
                                 buildout_files.append({'tar':tar,
-                                                       'directory':'t',
                                                        'file':f,
                                                        'filename':f.name,
                                                        'uid':uid,
@@ -113,7 +125,18 @@ class Buildouts(grok.View):
                     valid_buildouts.append({'toplevel':buildout,
                                             'buildouts':buildout_files})
         self.buildouts = valid_buildouts
-        pdb.set_trace()
+        try:
+            self.context['preconfigured']
+        except KeyError:
+            self.context['preconfigured'] = PersistentMapping()
+
+        for toplevel in valid_buildouts:
+            for buildout in toplevel['buildouts']:
+                try:
+                    self.context['preconfigured'][unicode(buildout['uid'])] = Buildout(buildout['manager'])
+                except Exception, e:
+                    print e
+                    pdb.set_trace()
     
 class Intro(grok.Viewlet):
     grok.viewletmanager(MainContent)
@@ -135,6 +158,7 @@ class EditBuildout(grok.Viewlet):
         pass
 
 class AppKSS(KSSActions):
+    grok.context(BuildoutBuilder)
     def presentFindLinkForm(self):
         new_find_link_form = """<form><input type="text" name="newfindlink"><input type="submit" value="Add" id="add_find_link_submit"></form>"""
 
