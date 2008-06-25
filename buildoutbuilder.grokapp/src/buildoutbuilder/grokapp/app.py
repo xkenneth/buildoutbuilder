@@ -25,22 +25,35 @@ buildout_re = re.compile('.*.cfg$')
 tar_re = re.compile('.*.tar.gz')
 
 
+
+class BuildoutContainer(grok.Container):
+    pass
+
+class BuildoutContainerIndex(grok.View):
+    grok.context(BuildoutContainer)
+    grok.template('index')
+    grok.name('index')
+
+class BuildoutBuilder(grok.Application, grok.Container):
+    pass
+
 class Buildout(grok.Model):
     def __init__(self,manager):
         self.manager = manager
 
-class BuildoutIndex(grok.View):
-    grok.context(Buildout)
-    grok.template('buildoutview')
-    grok.name('index')
-    
-    
-class BuildoutBuilder(grok.Application, grok.Container):
-    pass
+#class BuildoutIndex(grok.View):
+#    grok.context(Buildout)
+#    grok.template('index')
+#    grok.name('index')
 
 #header viewlet manager
 class Header(grok.ViewletManager):
     grok.context(BuildoutBuilder)
+    grok.name('header')
+
+class BuildoutHeader(grok.ViewletManager):
+    grok.context(Buildout)
+    grok.template('header')
     grok.name('header')
 
 #left side bar viewlet manager
@@ -48,9 +61,19 @@ class LeftSidebar(grok.ViewletManager):
     grok.context(BuildoutBuilder)
     grok.name('left')
 
+class BuildoutLeftSidebar(grok.ViewletManager):
+    grok.context(Buildout)
+    grok.template('leftsidebar')
+    grok.name('left')
+
 #main content viewlet manager
 class MainContent(grok.ViewletManager):
     grok.context(BuildoutBuilder)
+    grok.name('main')
+
+class BuildoutMainContent(grok.ViewletManager):
+    grok.context(Buildout)
+    grok.template('maincontent')
     grok.name('main')
 
 #main app css
@@ -73,7 +96,7 @@ class Menu(grok.Viewlet):
     grok.order(2)
 
 class Index(grok.View):
-    grok.context(BuildoutBuilder)
+    grok.context(Interface)
 
 class CreateBuildout(grok.View):
     grok.context(BuildoutBuilder)
@@ -92,7 +115,6 @@ class Buildouts(grok.View):
         if os.path.isdir(buildout_dir):
             uid = 0
             buildouts = dircache.listdir(buildout_dir)
-            pdb.set_trace()
             for buildout in buildouts:
                 if tar_re.match(buildout) is not None:
                     buildout_files = []
@@ -128,15 +150,16 @@ class Buildouts(grok.View):
         try:
             self.context['preconfigured']
         except KeyError:
-            self.context['preconfigured'] = PersistentMapping()
-
+            self.context['preconfigured'] = BuildoutContainer()
+            
         for toplevel in valid_buildouts:
             for buildout in toplevel['buildouts']:
                 try:
                     self.context['preconfigured'][unicode(buildout['uid'])] = Buildout(buildout['manager'])
                 except Exception, e:
                     print e
-                    pdb.set_trace()
+
+        
     
 class Intro(grok.Viewlet):
     grok.viewletmanager(MainContent)
