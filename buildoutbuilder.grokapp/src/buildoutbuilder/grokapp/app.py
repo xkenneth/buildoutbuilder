@@ -18,85 +18,79 @@ from buildoutbuilder.grokapp import utils
 
 from persistent.mapping import PersistentMapping
 
+#constants
 BUILDOUTS_FOLDER = 'buildouts'
-editable_buildout = None
 
+#re's for checking files
 buildout_re = re.compile('.*.cfg$')
 tar_re = re.compile('.*.tar.gz')
 
-
-
-class BuildoutContainer(grok.Container):
-    pass
-
-class BuildoutContainerIndex(grok.View):
-    grok.context(BuildoutContainer)
-    grok.template('index')
-    grok.name('index')
-
+#main app
 class BuildoutBuilder(grok.Application, grok.Container):
     pass
 
+#container for buildouts
+class BuildoutContainer(grok.Container):
+    pass
+
+#buildout model
 class Buildout(grok.Model):
     def __init__(self,manager):
+        #a manager represents a buildout
         self.manager = manager
 
-#class BuildoutIndex(grok.View):
-#    grok.context(Buildout)
-#    grok.template('index')
-#    grok.name('index')
+#viewlet managers
 
 #header viewlet manager
 class Header(grok.ViewletManager):
-    grok.context(BuildoutBuilder)
-    grok.name('header')
-
-class BuildoutHeader(grok.ViewletManager):
-    grok.context(Buildout)
-    grok.template('header')
+    grok.context(Interface)
     grok.name('header')
 
 #left side bar viewlet manager
 class LeftSidebar(grok.ViewletManager):
-    grok.context(BuildoutBuilder)
-    grok.name('left')
-
-class BuildoutLeftSidebar(grok.ViewletManager):
-    grok.context(Buildout)
-    grok.template('leftsidebar')
+    grok.context(Interface)
     grok.name('left')
 
 #main content viewlet manager
 class MainContent(grok.ViewletManager):
-    grok.context(BuildoutBuilder)
+    grok.context(Interface)
     grok.name('main')
 
-class BuildoutMainContent(grok.ViewletManager):
-    grok.context(Buildout)
-    grok.template('maincontent')
-    grok.name('main')
+#css
 
-#main app css
+#app
 class AppCSS(grok.Viewlet):
     grok.viewletmanager(Header)
-    grok.context(BuildoutBuilder)
+    grok.context(Interface)
 
+#rounded corners
 class RoundedCornersCSS(grok.Viewlet):
     grok.viewletmanager(Header)
-    grok.context(BuildoutBuilder)
+    grok.context(Interface)
 
-class Title(grok.Viewlet):
-    grok.context(BuildoutBuilder)
-    grok.viewletmanager(Header)
-    grok.order(1)
 
-class Menu(grok.Viewlet):
+#kss
+class AppKSS(KSSActions):
     grok.context(BuildoutBuilder)
-    grok.viewletmanager(Header)
-    grok.order(2)
+    def presentFindLinkForm(self):
+        new_find_link_form = """<form><input type="text" name="newfindlink"><input type="submit" value="Add" id="add_find_link_submit"></form>"""
 
+        core = self.getCommandSet('core')
+        core.replaceHTML('#show_add_find_link_form', new_find_link_form)
+    
+    def addFindLink(self):
+        pass
+        #for field, value in self.request.form.items():
+        #   if field == u'newfindlink':
+        #        self.context.buildoutmanager.find_links.append(value)
+        #print self.context
+
+#views
 class Index(grok.View):
     grok.context(Interface)
+    def update(self):
+        #pdb.set_trace()
+        pass
 
 class CreateBuildout(grok.View):
     grok.context(BuildoutBuilder)
@@ -159,8 +153,20 @@ class Buildouts(grok.View):
                 except Exception, e:
                     print e
 
-        
-    
+#viewlets
+
+#header viewlets
+class Title(grok.Viewlet):
+    grok.context(Interface)
+    grok.viewletmanager(Header)
+    grok.order(1)
+
+class Menu(grok.Viewlet):
+    grok.context(Interface)
+    grok.viewletmanager(Header)
+    grok.order(2)
+
+#content viewlets
 class Intro(grok.Viewlet):
     grok.viewletmanager(MainContent)
     grok.context(BuildoutBuilder)
@@ -179,22 +185,6 @@ class EditBuildout(grok.Viewlet):
     
     def update(self):
         pass
-
-class AppKSS(KSSActions):
-    grok.context(BuildoutBuilder)
-    def presentFindLinkForm(self):
-        new_find_link_form = """<form><input type="text" name="newfindlink"><input type="submit" value="Add" id="add_find_link_submit"></form>"""
-
-        core = self.getCommandSet('core')
-        core.replaceHTML('#show_add_find_link_form', new_find_link_form)
-    
-    def addFindLink(self):
-        pass
-        #for field, value in self.request.form.items():
-        #   if field == u'newfindlink':
-        #        self.context.buildoutmanager.find_links.append(value)
-        #print self.context
-
 
 class BuildoutView(grok.Viewlet):
     grok.viewletmanager(MainContent)
@@ -234,6 +224,7 @@ class BuildoutList(grok.Viewlet):
     def update(self):
         self.buildouts = self.__parent__.buildouts
 
+#left viewlets
 class LeftPaneIntro(grok.Viewlet):
     grok.viewletmanager(LeftSidebar)
     grok.order(1)
