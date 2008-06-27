@@ -1,1 +1,43 @@
-Yay!
+<div id="buildoutview">
+  <p tal:condition="python: not(context.manager)">No Buildout!</p>
+  <p tal:condition="context/manager"> 
+    Eggs
+    <li tal:repeat="item context/manager/eggs">
+      <p tal:content="item"/>
+    </li>
+  </p>
+  
+  <p tal:condition="context/manager">
+    Find-Links
+    <li tal:repeat="item context/manager/find_links">
+      <p tal:content="item"/>
+    </li>
+    <br>
+
+  </p>
+  
+  <p tal:condition="context/manager">
+    Develop-Dirs
+    <li tal:repeat="item context/manager/develop_dirs">
+      <p tal:content="item"/>
+    </li>
+  </p>
+  
+  <div tal:condition="context/manager">
+    Parts
+    <div tal:repeat="part context/manager/parts">
+      <h3 tal:content="python: context.manager.parts[part]">Part</h3>
+      <div tal:repeat="option python: context.manager.parts[part].options">
+	<span tal:content="option"/> 
+	= 
+	<p tal:repeat="sub python: context.manager.parts[part].options[option]">
+	  <span tal:repeat="subpart sub">
+	    <span tal:content="subpart"/>
+	  </span>
+	</p>
+      </div>
+    </div>
+    
+    
+  </div>
+  

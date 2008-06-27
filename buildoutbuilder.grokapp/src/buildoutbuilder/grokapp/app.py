@@ -6,6 +6,7 @@ import re
 import tarfile
 import cStringIO
 
+
 from megrok.kss import KSSActions
 
 from zope.component import getMultiAdapter
@@ -17,6 +18,9 @@ from buildoutbuilder.managers.errors import *
 from buildoutbuilder.grokapp import utils
 
 from persistent.mapping import PersistentMapping
+
+#custom containers and models
+from buildoutbuilder.grokapp.buildout import Buildout
 
 #constants
 BUILDOUTS_FOLDER = 'buildouts'
@@ -34,11 +38,11 @@ class BuildoutContainer(grok.Container):
     pass
 
 #buildout model
-class Buildout(grok.Model):
-    def __init__(self,manager):
-        #a manager represents a buildout
-        self.manager = manager
 
+#buildout indexes
+
+
+    
 #viewlet managers
 
 #header viewlet manager
@@ -87,10 +91,11 @@ class AppKSS(KSSActions):
 
 #views
 class Index(grok.View):
-    grok.context(Interface)
+    grok.context(BuildoutBuilder)
     def update(self):
-        #pdb.set_trace()
         pass
+    
+    
 
 class CreateBuildout(grok.View):
     grok.context(BuildoutBuilder)
@@ -154,6 +159,9 @@ class Buildouts(grok.View):
                     print e
 
 #viewlets
+
+#buildout viewlets
+
 
 #header viewlets
 class Title(grok.Viewlet):
