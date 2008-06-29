@@ -1,11 +1,11 @@
 import grok
 import pdb
 #access to app modules
-pdb.set_trace()
-from app import MainContent
 
 #set the template directory
-grok.templatedir('app')
+grok.templatedir('app_templates')
+
+from buildoutbuilder.grokapp.viewletmanagers import MainContent
 
 
 ##### MODELS #####

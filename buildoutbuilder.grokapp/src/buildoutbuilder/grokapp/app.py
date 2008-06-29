@@ -17,6 +17,9 @@ from buildoutbuilder.managers.BuildoutManager import BuildoutManager
 from buildoutbuilder.managers.errors import *
 from buildoutbuilder.grokapp import utils
 
+#viewlet managers
+from buildoutbuilder.grokapp.viewletmanagers import MainContent, Header, LeftSidebar
+
 from persistent.mapping import PersistentMapping
 
 #custom containers and models
@@ -43,22 +46,8 @@ class BuildoutContainer(grok.Container):
 
 
     
-#viewlet managers
-
-#header viewlet manager
-class Header(grok.ViewletManager):
-    grok.context(Interface)
-    grok.name('header')
-
-#left side bar viewlet manager
-class LeftSidebar(grok.ViewletManager):
-    grok.context(Interface)
-    grok.name('left')
-
 #main content viewlet manager
-class MainContent(grok.ViewletManager):
-    grok.context(Interface)
-    grok.name('main')
+
 
 #css
 
