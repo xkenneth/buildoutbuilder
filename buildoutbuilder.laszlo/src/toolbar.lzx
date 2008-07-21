@@ -1,0 +1,12 @@
+<window title="ToolBar" name="buildout_toolbar">
+  <tabslider height="200" width="200" name="toolbar_slider">
+    <tabelement name="parts_tab">Parts
+      <simplelayout axis="y"/>
+      <text> Part Name:</text>
+      <edittext width="150" name="new_part_field"></edittext>
+      <button id="new_part_button" name="new_part_button" onclick="create_part()">Create</button>
+    </tabelement>
+    <tabelement>Section
+    </tabelement>
+  </tabslider>
+</window>

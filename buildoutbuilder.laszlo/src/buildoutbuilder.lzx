@@ -1,0 +1,86 @@
+<canvas debug="true">
+  <!-- Current Buildout DataSet -->
+  <dataset name="current_buildout">
+    <buildout>
+      <buildout/>
+    </buildout>
+  </dataset>
+
+  <!-- DATA POINTERS -->
+
+  <!-- Buildout DataPointer -->
+  <datapointer id="buildout_dp" xpath="current_buildout:/buildout"/>
+  <!-- Part DataPointer -->
+  <datapointer id="part_dp" xpath="current_buildout:/buildout/buildout"/>
+
+  <!-- Startup Scripts -->
+  <!-- Initialize our TabSlider -->
+
+  <!-- METHODS -->	
+  <method name="test2">
+    Debug.write('Test2!');
+  </method>
+  
+  <script>
+    function init_editor() {
+    var next = true
+    while (next == true) {
+    canvas.main_tabs.buildout_editor.buildout_ts.addItem(part_dp.getNodeName()) 
+    next = part_dp.selectNext()
+    }
+    }
+    
+    function test() {
+    Debug.write('Test!');
+    }	
+		
+    function create_part() {
+    //get the part name
+    part_name = canvas.main_tabs.buildout_editor.buildout_toolbar.toolbar_slider.parts_tab.new_part_field.text
+    //add the part to the dom
+    buildout_dp.addNode(part_name)
+
+    //add it to the tab slider
+    canvas.main_tabs.buildout_editor.buildout_ts.addItem(part_name)
+    
+    //wipe out the text field
+    canvas.main_tabs.buildout_editor.buildout_toolbar.toolbar_slider.parts_tab.new_part_field.text = ''
+    
+    //create the delete button
+    var delete_button = new lz.button(canvas.main_tabs.buildout_editor.buildout_ts.getItem(part_name))
+    delete_button.setAttribute('text','Delete')
+    
+    //create the delegate
+    if ( typeof delete_button.del == "undefined" ) {
+    delete_button.del = new LzDelegate( delete_button, "test2");
+    }
+    
+    delete_button.del.register( delete_button, "onclick" );
+    
+    }
+
+  </script>
+  
+  
+
+  <!-- FUNCTIONS -->
+  
+
+  
+  <tabs name="main_tabs">
+    <tabpane name="home">Home</tabpane>
+    <tabpane name="buildouts">Buildouts</tabpane>
+    <tabpane name="buildout_editor">Buildout Editor
+      
+      <!-- BEGIN TOOLBAR -->
+      <include href="toolbar.lzx"/>
+      <!-- END TOOLBAR -->
+
+      <!-- EDITOR SLIDER -->
+      <tabslider width="250" height="300" name="buildout_ts" oninit="init_editor()">
+      </tabslider>
+      <!-- END EDITOR SLIDER -->
+    </tabpane>
+  </tabs>
+  
+</canvas>
