@@ -14,7 +14,7 @@ private_re = re.compile('__.*__')
 link_re = re.compile('\${[^\{^\}]*}')
 link_re_capture = re.compile('(\${[^\{^\}]*})')
 
-def generator(uri):
+def generate(uri):
     """Return an lxml.etree object that represents a buildout."""
     
     #initialize a configparser
@@ -158,6 +158,6 @@ if __name__ == '__main__':
 
     class Construction(DOMTestCase):
         def testBuildout1(self):
-            print etree.tostring(generator(self.buildout1),pretty_print=True)
+            print etree.tostring(generate(self.buildout1),pretty_print=True)
             
     unittest.main()

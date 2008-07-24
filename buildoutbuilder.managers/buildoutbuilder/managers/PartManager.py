@@ -2,6 +2,7 @@ import re
 from buildoutbuilder.managers.Link import Link
 from buildoutbuilder.managers.Link import link_re_capture
 from buildoutbuilder.managers.errors import *
+
 private_re = re.compile('__.*__')
 
 class PartManager:
