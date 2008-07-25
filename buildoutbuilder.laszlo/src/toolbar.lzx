@@ -1,0 +1,3 @@
+<text> Parts Name:</text>
+<edittext width="150" name="new_part_field"></edittext>
+<button name="new_part_button" onclick="create_part()">Create</button>

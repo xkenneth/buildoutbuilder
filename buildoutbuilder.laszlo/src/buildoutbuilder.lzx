@@ -1,0 +1,98 @@
+<canvas debug="true">
+  <!-- Current Buildout DataSet -->
+  <dataset name="current_buildout">
+    <buildout>
+      <buildout/>
+    </buildout>
+  </dataset>
+
+  <!-- DATA POINTERS -->
+
+  <!-- Buildout DataPointer -->
+  <datapointer id="buildout_dp" xpath="current_buildout:/buildout"/>
+  <!-- Part DataPointer -->
+  <datapointer id="part_dp" xpath="current_buildout:/buildout/buildout"/>
+
+  <!-- Startup Scripts -->
+  <!-- Initialize our TabSlider -->
+
+  <!-- METHODS -->	
+  <method name="delete_part" args="element">
+    var xp = 'current_buildout:/buildout/' + element.parent.text
+    part_dp.setXPath( xp )
+    part_dp.deleteNode()
+    element.parent.parent.removeItem(element.parent.text)
+  </method>
+  
+  <script>
+
+    
+    
+    function create_part() {
+
+    //get the part name
+
+    part_name = canvas.main_tabs.buildout_editor.new_part_field.text
+    //add the part to the dom
+    buildout_dp.addNode(part_name)
+
+    //add it to the tab slider
+    canvas.main_tabs.buildout_editor.buildout_ts.addItem(part_name)
+    
+    //wipe out the text field
+    canvas.main_tabs.buildout_editor.new_part_field.text = ''
+    
+    //create the delete button
+    var delete_button = new lz.button(canvas.main_tabs.buildout_editor.buildout_ts.getItem(part_name))
+    delete_button.setAttribute('text','Delete')
+    
+    //create the delegate
+    if ( typeof delete_button.del == "undefined" ) {
+    delete_button.del = new LzDelegate(canvas, 'delete_part', delete_button, "onclick")
+    }
+    
+    delete_button.del.register( delete_button, "onclick" );
+    
+    }
+
+  </script>
+  
+  
+
+  <!-- FUNCTIONS -->
+  
+
+  
+  <tabs name="main_tabs">
+    <tabpane name="home">Home</tabpane>
+    <tabpane name="buildouts">Buildouts</tabpane>
+    <tabpane name="buildout_editor">Buildout Editor
+      
+      <!-- EDITOR SLIDER -->
+      <tabslider width="250" height="300" name="buildout_ts">
+	<tabelement>buildout</tabelement>
+	<handler name="onconstruct" method="init_editor"/>	
+	<method name="init_editor" args="ts">
+	  var next = true
+	  var last = ''
+	  while (next == true) {
+	  Debug.write(part_dp.getNodeName())
+	  if ( part_dp.getNodeName() != 'buildout' ) {
+	  canvas.main_tabs.buildout_editor.buildout_ts.addItem(part_dp.getNodeName())
+	  
+	  }
+	  if ( part_dp.getNodeName() == last ) {
+	  break;
+	  }
+	  last = part_dp.getNodeName()
+	  next = part_dp.selectNext()
+	  }
+	</method>
+      </tabslider>
+      <!-- END EDITOR SLIDER -->
+
+      
+    </tabpane>
+  </tabs>
+  
+</canvas>

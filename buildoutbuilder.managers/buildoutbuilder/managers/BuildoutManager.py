@@ -4,8 +4,11 @@ import pdb
 import os.path
 import StringIO
 
+from persistent.list import PersistentList
+from persistent.mapping import PersistentMapping
+
 class BuildoutManager:
-    def __init__(self,uri):
+    def __init__(self,uri=None):
         """Initializes a buildoutmanager from a buildout located by a URI"""
         
         from buildoutbuilder.managers.PartManager import PartManager
@@ -14,16 +17,16 @@ class BuildoutManager:
         self.uri = uri #save the URI
         
         #a container for our eggs
-        self.eggs = []
+        self.eggs = PersistentList()
 
         #a container for the find-links
-        self.find_links = []
+        self.find_links = PersistentList()
 
         #a container for develop dirs
-        self.develop_dirs = []
+        self.develop_dirs = PersistentList()
         
         #to keep track of the part managers
-        self.parts = {}
+        self.parts = PersistentMapping()
 
         #start the configparser
         cp = ConfigParser.ConfigParser() 
@@ -32,6 +35,9 @@ class BuildoutManager:
         #if not os.path.isfile(uri):
             #see if the uri is a string
             
+        if uri is None:
+            return
+
         files = cp.read(uri)
         
         try:
