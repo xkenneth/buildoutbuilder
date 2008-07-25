@@ -26,14 +26,7 @@
   
   <script>
 
-    function init_editor() {
-    var next = true
-    while (next == true) {
-    Debug.write(part_dp.getNodeName())
-    canvas.main_tabs.buildout_editor.buildout_ts.addItem(part_dp.getNodeName())
-    next = part_dp.selectNext()
-    }
-    }
+    
     
     function create_part() {
 
@@ -76,7 +69,25 @@
     <tabpane name="buildout_editor">Buildout Editor
       
       <!-- EDITOR SLIDER -->
-      <tabslider width="250" height="300" name="buildout_ts" oninit="init_editor()">
+      <tabslider width="250" height="300" name="buildout_ts">
+	<tabelement>buildout</tabelement>
+	<handler name="onconstruct" method="init_editor"/>	
+	<method name="init_editor" args="ts">
+	  var next = true
+	  var last = ''
+	  while (next == true) {
+	  Debug.write(part_dp.getNodeName())
+	  if ( part_dp.getNodeName() != 'buildout' ) {
+	  canvas.main_tabs.buildout_editor.buildout_ts.addItem(part_dp.getNodeName())
+	  
+	  }
+	  if ( part_dp.getNodeName() == last ) {
+	  break;
+	  }
+	  last = part_dp.getNodeName()
+	  next = part_dp.selectNext()
+	  }
+	</method>
       </tabslider>
       <!-- END EDITOR SLIDER -->
 
