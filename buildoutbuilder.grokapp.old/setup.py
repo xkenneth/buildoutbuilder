@@ -21,7 +21,7 @@ setup(name='BuildoutBuilder',
       zip_safe=False,
       install_requires=['setuptools',
                         'grok',
-                        'megrok.kss==0.1',
+                        'lxml',
                         # Add extra requirements here
                         ],
       entry_points="""

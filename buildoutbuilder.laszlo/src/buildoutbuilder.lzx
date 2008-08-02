@@ -2,9 +2,18 @@
   <!-- Current Buildout DataSet -->
   <dataset name="current_buildout">
     <buildout>
-      <buildout/>
+      <part>
+	<name>buildout</name>
+      </part>
     </buildout>
   </dataset>
+
+  <!-- Available Buildouts DataSet -->
+  <dataset name="available_buildouts" request="true" src="http://localhost:8081/BuildoutBuilder/buildouts"/>
+  <dataset name="test_buildouts" request="true" src="http://localhost:8081/BuildoutBuilder/buildouts"/>
+  
+  <!-- Test DataSet -->
+  <dataset name="test"/>
 
   <!-- DATA POINTERS -->
 
@@ -63,31 +72,40 @@
   
 
   
-  <tabs name="main_tabs">
+  <tabs name="main_tabs" width="${canvas.width*0.90}" x="${canvas.width/2.0*0.1}" height="${canvas.height}">
     <tabpane name="home">Home</tabpane>
-    <tabpane name="buildouts">Buildouts</tabpane>
+    <tabpane name="buildouts">Buildouts
+      <!-- Buildouts Tree -->
+      <button>Load
+	<handler name="onclick">
+	  Debug.write(buildout_tree)
+
+	</handler>
+      </button>
+      
+      <simplelayout axis="y"/>
+      <tree id="buildout_tree" width="200" height="500" datapath="available_buildouts:/Buildouts">
+      	<tree datapath="*" text="$path{'@name'}" isleaf="$path{'@file'}">
+	  <handler name="onactivate">
+	    last = this
+	    text = this.text
+	    while(last!=buildout_tree) {
+	    text = last.text + '/' + text
+	    last = last.parent
+	    }
+	    Debug.write(text)
+	  </handler>
+	</tree>
+      </tree>
+      
+      <!-- End Buildouts Tree -->
+    </tabpane>
     <tabpane name="buildout_editor">Buildout Editor
       
       <!-- EDITOR SLIDER -->
-      <tabslider width="250" height="300" name="buildout_ts">
-	<tabelement>buildout</tabelement>
-	<handler name="onconstruct" method="init_editor"/>	
-	<method name="init_editor" args="ts">
-	  var next = true
-	  var last = ''
-	  while (next == true) {
-	  Debug.write(part_dp.getNodeName())
-	  if ( part_dp.getNodeName() != 'buildout' ) {
-	  canvas.main_tabs.buildout_editor.buildout_ts.addItem(part_dp.getNodeName())
-	  
-	  }
-	  if ( part_dp.getNodeName() == last ) {
-	  break;
-	  }
-	  last = part_dp.getNodeName()
-	  next = part_dp.selectNext()
-	  }
-	</method>
+      <tabslider width="${parent.width*0.95}" height="${parent.height*0.9}" name="buildout_ts">
+	<tabelement datapath="current_buildout:/buildout/part" text="$path{'name/text()'}">
+	  </tabelement>
       </tabslider>
       <!-- END EDITOR SLIDER -->
 

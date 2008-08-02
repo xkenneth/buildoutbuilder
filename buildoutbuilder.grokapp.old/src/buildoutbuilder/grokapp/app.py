@@ -64,52 +64,54 @@ class Index(grok.View):
         except Exception, e:
             print e
         
-# class Buildouts(grok.View):
-#     grok.context(BuildoutBuilder)
-#     grok.template('index')
+class Buildouts(grok.View):
+    grok.context(BuildoutBuilder)
+    grok.template('index')
 
-#     def update(self,buildout=None):
-#         #updating the current buildout view uid
-#         self.buildout = buildout
+    def update(self,buildout=None):
+        #updating the current buildout view uid
+        self.buildout = buildout
 
-#         buildout_dir = self.static.get(BUILDOUTS_FOLDER).context.path
-#         valid_buildouts = []
-#         if os.path.isdir(buildout_dir):
-#             uid = 0
-#             buildouts = dircache.listdir(buildout_dir)
-#             for buildout in buildouts:
-#                 if tar_re.match(buildout) is not None:
-#                     buildout_files = []
-#                     tar = tarfile.open(os.path.join(buildout_dir,buildout), "r:gz")
-#                     for f in tar:
-#                         if buildout_re.match(f.name) is not None:
-#                             try:
-#                                 manager = BuildoutManager(tar.extractfile(f.name).read())
-#                                 buildout_files.append({'tar':tar,
-#                                                        'directory':'t',
-#                                                        'file':f,
-#                                                        'filename':f.name,
-#                                                        'uid':uid,
-#                                                        'url':self.url('buildouts')+'?buildout='+str(uid),
-#                                                        'manager':manager})
+        buildout_dir = self.static.get(BUILDOUTS_FOLDER).context.path
+        valid_buildouts = []
+        if os.path.isdir(buildout_dir):
+            uid = 0
+            buildouts = dircache.listdir(buildout_dir)
+            for buildout in buildouts:
+                if tar_re.match(buildout) is not None:
+                    buildout_files = []
+                    tar = tarfile.open(os.path.join(buildout_dir,buildout), "r:gz")
+                    for f in tar:
+                        if buildout_re.match(f.name) is not None:
+                            try:
+                                manager = BuildoutManager(tar.extractfile(f.name).read())
+                                buildout_files.append({'tar':tar,
+                                                       'directory':'t',
+                                                       'file':f,
+                                                       'filename':f.name,
+                                                       'uid':uid,
+                                                       'url':self.url('buildouts')+'?buildout='+str(uid),
+                                                       'manager':manager})
                                 
                                 
-#                                 uid += 1
-#                             except BuildoutBuilderException, e:
-#                                 #see if it's a BB exc
-#                                 #if isinstance(e,BuildoutBuilderException):
+                                uid += 1
+                            except BuildoutBuilderException, e:
+                                #see if it's a BB exc
+                                #if isinstance(e,BuildoutBuilderException):
                                 
-#                                 pass
-#                                 #else:
-#                                 #    raise e
-#                             except Exception, e:
-#                                 print e
+                                pass
+                                #else:
+                                #    raise e
+                            except Exception, e:
+                                print e
                             
                             
                     
-#                     valid_buildouts.append({'toplevel':buildout,
-#                                             'buildouts':buildout_files})
-#         self.buildouts = valid_buildouts
+                    valid_buildouts.append({'toplevel':buildout,
+                                            'buildouts':buildout_files})
+        self.buildouts = valid_buildouts
+
+        pdb.set_trace()
     
 # class Intro(grok.Viewlet):
 #     grok.viewletmanager(MainContent)

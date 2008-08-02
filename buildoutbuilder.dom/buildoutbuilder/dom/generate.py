@@ -18,13 +18,22 @@ def generate(uri):
     """Return an lxml.etree object that represents a buildout."""
     
     #initialize a configparser
-    cp = ConfigParser.ConfigParser()
-    
+    if isinstance(uri,ConfigParser.ConfigParser):
+        cp = uri
+        
     if isinstance(uri,str):
         uri = StringIO.StringIO(uri)
+        cp = ConfigParser.ConfigParser()
         cp.readfp(uri)
-    else:
+
+        
+    try:
+        cp
+    except AttributeError:
+        cp = ConfigParser.ConfigParser()
         cp.read(uri)
+
+    
         
     
     if not cp.has_section( 'buildout' ):
@@ -128,36 +137,3 @@ def generate_section(section,options_dict):
             
                 
 
-    #for option in options:
-#         #initial split to seperate lists
-#         options[option] = options[option].split() 
-
-#         for sub_option in options[option]:
-#             #try to see if the sub_option contains a link
-#             sub_option_split = link_re_capture.split(sub_option)
-                
-            
-#             for sub_part in sub_option_split:
-#                 try:
-#                     pdb.set_trace()
-#                     new_link = sub_part
-#                     sub_option_split[sub_option_split.index(sub_part)] = new_link
-#                 except ValueError:
-#                     pass
-                    
-#             try:
-#                 while (1):
-#                     sub_option_split.pop(sub_option_split.index(''))
-#             except ValueError:
-#                 pass
-
-#             options[option][options[option].index(sub_option)] = sub_option_split
-            
-if __name__ == '__main__':
-    import unittest
-
-    class Construction(DOMTestCase):
-        def testBuildout1(self):
-            print etree.tostring(generate(self.buildout1),pretty_print=True)
-            
-    unittest.main()

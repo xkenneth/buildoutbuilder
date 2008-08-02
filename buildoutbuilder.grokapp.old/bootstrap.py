@@ -17,7 +17,7 @@ Simply run this script in a directory containing a buildout.cfg.
 The script accepts buildout command-line options, so you can
 use the -c option to specify an alternate configuration file.
 
-$Id$
+$Id: bootstrap.py 85041 2008-03-31 15:57:30Z andreasjung $
 """
 
 import os, shutil, sys, tempfile, urllib2
@@ -60,3 +60,7 @@ ws.require('zc.buildout')
 import zc.buildout.buildout
 zc.buildout.buildout.main(sys.argv[1:] + ['bootstrap'])
 shutil.rmtree(tmpeggs)
+
+# grokproject specific addition to standard bootstrap.py:
+# Install eggbasket too.
+zc.buildout.buildout.main(sys.argv[1:] + ['install', 'eggbasket'])

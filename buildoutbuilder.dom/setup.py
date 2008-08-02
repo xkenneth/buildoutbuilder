@@ -1,9 +1,9 @@
 from distutils.core import setup
 from setuptools import find_packages
 
-setup(name='buildoutbuilder.managers',
+setup(name='buildoutbuilder.dom',
       version='0.1',
-      description='Buildout Builder buildout creation/parsing package.',
+      description='Tools for working with buildouts as a DOM',
       author='Kenneth Miller',
       author_email='xkenneth@gmail.com',
       url='buildoutbuilder.googlecode.com',

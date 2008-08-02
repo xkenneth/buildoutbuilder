@@ -1,11 +1,18 @@
 import pdb
 import ConfigParser
+import StringIO
 
 from lxml import etree
 
 ### APP ###
 from generate import generate
 from testCase import DOMTestCase
+
+def to_string(cp):
+    t = StringIO.StringIO()
+    cp.write(t)
+    t.seek(0)
+    return t.read()
 
 def render(dom):
     """Returns a ConfigParser instance from a buildout DOM"""
@@ -37,6 +44,8 @@ def render(dom):
 
     return cp
 
+
+
 def render_link(dom):
     """Return a string representation of a buildout_link"""
 
@@ -57,14 +66,3 @@ def render_list(values):
 
     return val_str
             
-if __name__ == '__main__':
-    
-    import unittest
-    class Reconstruction(DOMTestCase):
-        def testBuildout1(self):
-            cp = render(generate(self.buildout1))
-            cp.write(file('/tmp/test.cfg','w'))
-
-    unittest.main()
-    
-    
