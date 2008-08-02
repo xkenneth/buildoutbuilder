@@ -17,6 +17,7 @@ link_re_capture = re.compile('(\${[^\{^\}]*})')
 def generate(uri):
     """Return an lxml.etree object that represents a buildout."""
     
+    print "?"
     #initialize a configparser
     if isinstance(uri,ConfigParser.ConfigParser):
         cp = uri
@@ -27,15 +28,17 @@ def generate(uri):
         cp.readfp(uri)
 
         
+    #if not already defined
     try:
         cp
-    except AttributeError:
+    except NameError:
         cp = ConfigParser.ConfigParser()
         cp.read(uri)
 
-    
         
-    
+    uri.seek(0)
+    print uri.read()
+
     if not cp.has_section( 'buildout' ):
         raise ValueError( 'Buildout does not have a buildout section' )
     
