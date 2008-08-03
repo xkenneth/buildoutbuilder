@@ -24,7 +24,30 @@ def buildout2():
 	
 	return cp
 
+def buildout3():
+	"""Testing some options."""
+	cp = buildout2()
+	cp.set('zope','instance','fg')
+	
+	return cp
+
+def buildout4():
+	"""Setting up some links."""
+	cp = buildout3()
+	
+	return cp
+
+def buildout5():
+	"""Add some find-links."""
+	cp = buildout4()
+	
+	return cp
+
+def buildout6():
+	"""Add some eggs."""
+	cp = buildout5()
+	return cp
 
 
-buildouts = [buildout1(),buildout2()]
+buildouts = [buildout1(),buildout2(),buildout3(),buildout4(),buildout5(),buildout6()]
 

@@ -23,8 +23,8 @@ def render(dom):
     
     for part in dom:
 
-        if part.tag != 'buildout': parts.append(part.tag)
-        cp.add_section(part.tag)
+        if part.get('name') != 'buildout': parts.append(part.get('name'))
+        cp.add_section(part.get('name'))
         
         for option in part:
             values = []
@@ -35,7 +35,7 @@ def render(dom):
                 else:
                     values.append(sub_option.text)
             
-            cp.set(part.tag,option.tag,render_list(values))
+            cp.set(part.get('name'),option.get('name'),render_list(values))
             
     
 

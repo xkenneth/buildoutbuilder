@@ -17,7 +17,6 @@ link_re_capture = re.compile('(\${[^\{^\}]*})')
 def generate(uri):
     """Return an lxml.etree object that represents a buildout."""
     
-    print "?"
     #initialize a configparser
     if isinstance(uri,ConfigParser.ConfigParser):
         cp = uri
@@ -36,9 +35,6 @@ def generate(uri):
         cp.read(uri)
 
         
-    uri.seek(0)
-    print uri.read()
-
     if not cp.has_section( 'buildout' ):
         raise ValueError( 'Buildout does not have a buildout section' )
     
@@ -50,7 +46,8 @@ def generate(uri):
     sections.pop( cp._sections.keys().index( 'buildout' ) )
     
     #create the buildout element
-    buildout_element = etree.Element('buildout')
+    buildout_element = etree.Element('part')
+    buildout_element.set('name','buildout')
     
     #for each part
     for section in sections:
@@ -87,7 +84,7 @@ def generate(uri):
         buildout_element.append(develop_dirs)
             
     dom.append(buildout_element)
-
+    
     return dom
 
 def generate_section(section,options_dict):
@@ -96,7 +93,8 @@ def generate_section(section,options_dict):
     options = {}
     
     #create the dom
-    dom = etree.Element(section)
+    dom = etree.Element('part')
+    dom.set('name',section)
 
     #for every incoming option
     for option in options_dict:
@@ -112,7 +110,8 @@ def generate_section(section,options_dict):
     #find and create the links
     
     for option in options:
-        new_option = etree.Element(option)
+        new_option = etree.Element('option')
+        new_option.set('name',option)
         for each_value in options[option]:
             #see if it's a link
             new_value = etree.Element('value')
@@ -140,3 +139,8 @@ def generate_section(section,options_dict):
             
                 
 
+if __name__ == "__main__":
+    from buildouts import buildouts
+    
+    
+    print etree.tostring(generate(buildouts[-1]),pretty_print=True)
