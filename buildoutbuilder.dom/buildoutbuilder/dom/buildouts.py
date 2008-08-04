@@ -34,6 +34,8 @@ def buildout3():
 def buildout4():
 	"""Setting up some links."""
 	cp = buildout3()
+
+	cp.set('zope','alink','${this:that}')
 	
 	return cp
 
@@ -41,13 +43,51 @@ def buildout5():
 	"""Add some find-links."""
 	cp = buildout4()
 	
+	cp.set('buildout','find-links','http://pypi.python.org')
+	
 	return cp
 
 def buildout6():
 	"""Add some eggs."""
 	cp = buildout5()
+
+	cp.set('buildout','eggs','buildoutbuilder')
+
+	return cp
+
+def buildout7():
+	"""Add an item that has a composite link"""
+	cp = buildout6()
+
+	cp.set('zope','eggs','${buildout:packages}/some/dir')
+	
+	return cp
+
+def buildout8():
+	"""Add a doubley composite link"""
+	cp = buildout7()
+
+	return cp
+
+def buildout9():
+	"""Add an option with multiple values"""
+	cp = buildout8()
+	
+	cp.set('zope','paths','/usr/bin\n/usr/local')
+	
 	return cp
 
 
-buildouts = [buildout1(),buildout2(),buildout3(),buildout4(),buildout5(),buildout6()]
+
+
+buildouts = [buildout1(),
+	     buildout2(),
+	     buildout3(),
+	     buildout4(),
+	     buildout5(),
+	     buildout6(),
+	     buildout7(),
+	     buildout8(),
+	     buildout9()]
+
 
