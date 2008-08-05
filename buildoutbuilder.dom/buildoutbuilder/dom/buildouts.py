@@ -40,19 +40,19 @@ def buildout4():
 	return cp
 
 def buildout5():
-	"""Add some find-links."""
-	cp = buildout4()
-	
-	cp.set('buildout','find-links','http://pypi.python.org')
-	
-	return cp
-
-def buildout6():
 	"""Add some eggs."""
-	cp = buildout5()
+	cp = buildout4()
 
 	cp.set('buildout','eggs','buildoutbuilder')
 
+	return cp
+
+def buildout6():
+	"""Add some find-links."""
+	cp = buildout5()
+	
+	cp.set('buildout','find-links','http://pypi.python.org')
+	
 	return cp
 
 def buildout7():

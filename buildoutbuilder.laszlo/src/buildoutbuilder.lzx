@@ -1,4 +1,7 @@
 <canvas debug="true">
+  <!-- Imports -->
+  <library href="elements.lzx"/>
+
   <!-- Current Buildout DataSet -->
   <dataset name="current_buildout">
     <buildout>
@@ -9,108 +12,118 @@
   </dataset>
 
   <!-- Available Buildouts DataSet -->
-  <dataset name="available_buildouts" request="true" src="http://localhost:8081/BuildoutBuilder/buildouts"/>
-  <dataset name="test_buildouts" request="true" src="http://localhost:8081/BuildoutBuilder/buildouts"/>
-  
-  <!-- Test DataSet -->
-  <dataset name="test"/>
+  <!-- The last loaded dataset must call the completeInstantation() for the main view -->
+  <dataset name="available_buildouts" request="true" src="http://localhost:8081/BuildoutBuilder/buildouts">
+    <handler name="ondata">
+      Debug.write("Comleting Instantiation");
+      canvas.main_view.completeInstantiation();
+      Debug.write("Instantiation Complete");
+    </handler>
+  </dataset>
+
+  <!-- Dataset for generating the buildout viewer -->
+  <dataset name="buildout_viewer"/>
+
+  <!-- XML-RPC -->
+  <xmlrpc name="backend" service="http://localhost:8081/BuildoutBuilder">
+    <remotecall name="buildout_dom" funcname="buildout_dom"> 
+      <handler name="ondata" args="value">
+	new_data = LzDataElement.stringToLzData(value);
+	
+	if (bov_dp.p.hasChildNodes())
+	{
+	do {
+	    bov_dp.p.removeChild(bov_dp.p.getFirstChild());
+	    } while (bov_dp.p.hasChildNodes());
+	}
+	
+	bov_dp.p.appendChild(new_data);
+
+	buildout_viewer.updateData();
+
+      </handler>
+    </remotecall>
+    
+    <remotecall name="test" funcname="test"/>
+    
+  </xmlrpc>
 
   <!-- DATA POINTERS -->
+  <datapointer id="bov_dp" xpath="buildout_viewer:/"/>
 
   <!-- Buildout DataPointer -->
   <datapointer id="buildout_dp" xpath="current_buildout:/buildout"/>
+
   <!-- Part DataPointer -->
   <datapointer id="part_dp" xpath="current_buildout:/buildout/buildout"/>
 
-  <!-- Startup Scripts -->
-  <!-- Initialize our TabSlider -->
 
-  <!-- METHODS -->	
-  <method name="delete_part" args="element">
-    var xp = 'current_buildout:/buildout/' + element.parent.text
-    part_dp.setXPath( xp )
-    part_dp.deleteNode()
-    element.parent.parent.removeItem(element.parent.text)
-  </method>
-  
-  <script>
+  <!-- Main View -->
+  <view name="main_view" initstage="defer">
+    <simplelayout axis="y"/>
+    <!-- Tabs -->
+    <tabs name="main_tabs" width="${canvas.width*0.90}" x="${canvas.width/2.0*0.1}" height="${canvas.height}">
 
-    
-    
-    function create_part() {
+      <!-- Home View -->
+      <tabpane name="home">Home
+	<text>Nothing on this page! Go to the Buildout Viewer!</text>
+      </tabpane>
 
-    //get the part name
+      <!-- Buildout View -->
+      <tabpane name="buildouts">Buildouts
+	
+	<!-- Buildouts Tree -->
+	<simplelayout axis="x"/>
+	<view width="${parent.width*0.18}">
+	  <simplelayout axis="y"/>
+	  <text>Available Buildouts</text>
+	  <tree id="buildout_tree" width="${parent.width}" height="${parent.height*0.8}" datapath="available_buildouts:/Buildouts">
+	    <tree datapath="*" text="$path{'@name'}" isleaf="$path{'@file'}">
+	      <handler name="onactivate">
+		last = this;
+		my_text = '';
+		first = true;
+		while(last != buildout_tree) {
+		if (first == true) {
+		my_text = last.text
+		first = false;
+		} else {
+		my_text = last.text + '/' + my_text;
+		}
+		last = last.parent;
+		}
+		
+		
+		backend.buildout_dom.invoke([my_text])
+		
+	      </handler>
+	      <handler name="onvisible">
+		this.updateData()
+	      </handler>
+	      
+	    </tree>
+	  </tree>
+	  <!-- End Buildouts Tree -->
+	</view>
 
-    part_name = canvas.main_tabs.buildout_editor.new_part_field.text
-    //add the part to the dom
-    buildout_dp.addNode(part_name)
-
-    //add it to the tab slider
-    canvas.main_tabs.buildout_editor.buildout_ts.addItem(part_name)
-    
-    //wipe out the text field
-    canvas.main_tabs.buildout_editor.new_part_field.text = ''
-    
-    //create the delete button
-    var delete_button = new lz.button(canvas.main_tabs.buildout_editor.buildout_ts.getItem(part_name))
-    delete_button.setAttribute('text','Delete')
-    
-    //create the delegate
-    if ( typeof delete_button.del == "undefined" ) {
-    delete_button.del = new LzDelegate(canvas, 'delete_part', delete_button, "onclick")
-    }
-    
-    delete_button.del.register( delete_button, "onclick" );
-    
-    }
-
-  </script>
-  
-  
-
-  <!-- FUNCTIONS -->
-  
-
-  
-  <tabs name="main_tabs" width="${canvas.width*0.90}" x="${canvas.width/2.0*0.1}" height="${canvas.height}">
-    <tabpane name="home">Home</tabpane>
-    <tabpane name="buildouts">Buildouts
-      <!-- Buildouts Tree -->
-      <button>Load
-	<handler name="onclick">
-	  Debug.write(buildout_tree)
-
-	</handler>
-      </button>
+	<view width="${parent.width*.78}" height="${parent.height*0.9}">
+	  
+	  
+	  
+	  <!-- Buildout Viewer -->
+	  <include href="buildoutviewer.lzx"/>
+	  <!-- End Buildout Viewer -->
+	  
+	</view>
+	
+      </tabpane>
       
-      <simplelayout axis="y"/>
-      <tree id="buildout_tree" width="200" height="500" datapath="available_buildouts:/Buildouts">
-      	<tree datapath="*" text="$path{'@name'}" isleaf="$path{'@file'}">
-	  <handler name="onactivate">
-	    last = this
-	    text = this.text
-	    while(last!=buildout_tree) {
-	    text = last.text + '/' + text
-	    last = last.parent
-	    }
-	    Debug.write(text)
-	  </handler>
-	</tree>
-      </tree>
-      
-      <!-- End Buildouts Tree -->
-    </tabpane>
-    <tabpane name="buildout_editor">Buildout Editor
-      
-      <!-- EDITOR SLIDER -->
-      <tabslider width="${parent.width*0.95}" height="${parent.height*0.9}" name="buildout_ts">
-	<tabelement datapath="current_buildout:/buildout/part" text="$path{'name/text()'}">
-	  </tabelement>
-      </tabslider>
-      <!-- END EDITOR SLIDER -->
-
-      
-    </tabpane>
-  </tabs>
-  
+      <!-- Buildout Editor -->
+      <tabpane name="buildout_editor">Buildout Editor
+	<text>Nothing on this page! Go to the Buildout Viewer!</text>
+      </tabpane>
+    </tabs>
+    <text>Kenneth Miller for GSOC 2008</text>
+  </view>
+    
 </canvas>

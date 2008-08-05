@@ -1,0 +1,44 @@
+<!-- Top Level View -->
+<view clip="true" height="${parent.height*0.9}" width="${parent.width}">
+  <!-- Layout out scrollbar and buildout area -->
+  <simplelayout axis="x"/>
+  
+  <!-- buildout view -->
+  <view>
+    <!-- Organize part views along the y axis -->
+    <simplelayout axis="y"/>
+    
+    <!-- part view -->
+    <view datapath="buildout_viewer:/buildout/part">
+      <simplelayout axis="y"/>
+      
+      <text fontstyle="bold" datapath="@name"/>
+      
+      <view>
+	<simplelayout axis="x"/>
+	<!-- Dummy view -->
+	<view width="75"/>
+	
+	<view>
+	  <simplelayout axis="y"/>
+
+	  <view datapath="option">
+	    <simplelayout axis="x"/>
+	    
+	    <text datapath="@name"/>
+	    <text>=</text>
+	    <view>
+	      <simplelayout axis="y"/>
+	      <view datapath="value">
+		<link datapath="link"/>
+		<text datapath="text()"/>
+	      </view>
+	    </view>
+	  </view>
+	  
+	</view>
+      </view>
+    </view>
+  </view>
+  <scrollbar/>
+</view>
