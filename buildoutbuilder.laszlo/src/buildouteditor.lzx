@@ -1,0 +1,53 @@
+<library>
+  <library href="elements.lzx"/>
+  
+  <class name="test_class" height="100" width="100">
+    <dragstate name="draggable"/>
+  </class>
+    
+  
+  <class name="editablepart" extends="part">
+    <!-- handlers -->
+    <handler name="onmousedown">
+      Debug.write('Kill Me 2!')
+    </handler>
+    <!-- for every value -->
+    <text>Remove Part
+      <handler name="onclick">
+	parent.datapath.deleteNode()
+      </handler>
+    </text>
+  </class>
+  
+  <class name="buildouteditor">
+    
+    <!-- on the y -->
+    <simplelayout axis="y"/>
+
+    <!-- for every part, create a view -->
+    <view name="parts_view">
+      <simplelayout axis="y"/>
+      <editablepart name="parts" datapath="part"/>
+    </view>
+
+    <!-- the add part view -->
+    <view name="add_part_view">
+      
+      <!-- along the x -->
+      <simplelayout axis="x"/>
+      <!-- new part interface -->
+      <edittext name="new_part"/>
+      <text fontstyle="bold">Add Part
+	<handler name="onclick">
+	  //get the text
+	  var new_name = parent.new_part.getText()
+	  //if it's not blank
+	  if ( new_name != '' ) {
+	  parent.parent.datapath.addNode('part','',{'name':new_name})
+	  }
+	</handler>
+      </text>
+
+    </view>
+  </class>
+</library>

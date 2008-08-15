@@ -30,8 +30,13 @@
 	    <view>
 	      <simplelayout axis="y"/>
 	      <view datapath="value">
+		<replicator datapath="link">
+		  <text>Link!</text>
+		</replicator>
 		<link datapath="link"/>
-		<text datapath="text()"/>
+		<view datapath="text">
+		  <text datapath="text()"/>
+		</view>
 	      </view>
 	    </view>
 	  </view>

@@ -1,52 +1,29 @@
 <canvas debug="true">
   <!-- Imports -->
   <library href="elements.lzx"/>
+  <library href="buildouteditor.lzx"/>
 
   <!-- Current Buildout DataSet -->
   <dataset name="current_buildout">
     <buildout>
-      <part>
-	<name>buildout</name>
-      </part>
+      <part name="buildout"/>
     </buildout>
-  </dataset>
-
-  <!-- Available Buildouts DataSet -->
-  <!-- The last loaded dataset must call the completeInstantation() for the main view -->
-  <dataset name="available_buildouts" request="true" src="http://localhost:8081/BuildoutBuilder/buildouts">
-    <handler name="ondata">
-      Debug.write("Comleting Instantiation");
-      canvas.main_view.completeInstantiation();
-      Debug.write("Instantiation Complete");
-    </handler>
   </dataset>
 
   <!-- Dataset for generating the buildout viewer -->
   <dataset name="buildout_viewer"/>
 
+  <!-- The last loaded dataset must call the completeInstantation() for the main view -->
+  <dataset name="available_buildouts" request="true" src="http://192.168.34.129:8081/BuildoutBuilder/buildouts">
+    <handler name="ondata">
+      canvas.main_view.completeInstantiation();
+    </handler>
+  </dataset>
+
+  
+
   <!-- XML-RPC -->
-  <xmlrpc name="backend" service="http://localhost:8081/BuildoutBuilder">
-    <remotecall name="buildout_dom" funcname="buildout_dom"> 
-      <handler name="ondata" args="value">
-	new_data = LzDataElement.stringToLzData(value);
-	
-	if (bov_dp.p.hasChildNodes())
-	{
-	do {
-	    bov_dp.p.removeChild(bov_dp.p.getFirstChild());
-	    } while (bov_dp.p.hasChildNodes());
-	}
-	
-	bov_dp.p.appendChild(new_data);
-
-	buildout_viewer.updateData();
-
-      </handler>
-    </remotecall>
-    
-    <remotecall name="test" funcname="test"/>
-    
-  </xmlrpc>
+  <include href="xmlrpc.lzx"/>
 
   <!-- DATA POINTERS -->
   <datapointer id="bov_dp" xpath="buildout_viewer:/"/>
@@ -105,7 +82,7 @@
 	  </tree>
 	  <!-- End Buildouts Tree -->
 	</view>
-
+	
 	<view width="${parent.width*.78}" height="${parent.height*0.9}">
 	  
 	  
@@ -120,7 +97,9 @@
       
       <!-- Buildout Editor -->
       <tabpane name="buildout_editor">Buildout Editor
-	<text>Nothing on this page! Go to the Buildout Viewer!</text>
+	<!-- Buildout Editor -->
+	<buildouteditor datapath="current_buildout:/"/>
+	<!-- End Buildout Editor -->
       </tabpane>
     </tabs>
     <text>Kenneth Miller for GSOC 2008</text>
