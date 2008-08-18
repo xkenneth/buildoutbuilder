@@ -1,0 +1,74 @@
+<library>
+  <!-- entry widget -->
+  <class name="subvaluewidget">
+    <attribute name="datanode" required="true"/>
+    <attribute name="container" required="true"/>
+    <simplelayout axis="x"/>
+    <edittext name="new_value"/>
+    <button>Ok
+      <handler name="onmousedown">
+	new_value_text = parent.new_value.getText()
+	
+	if ( new_value_text != '' ) {
+
+	new_data_text = new LzDataText(new_value_text)
+	
+	Debug.write(new_data_text)
+
+	new_text_node = new LzDataElement('text')
+	new_text_node.appendChild(new_data_text)
+
+	node_pointer = new LzDatapointer();
+	data_pointer = new LzDatapointer();
+
+	node_pointer.setPointer(new_text_node)
+	data_pointer.setPointer(parent.datanode.p)
+
+	data_pointer.addNodeFromPointer(node_pointer)
+	Debug.write(data_pointer)
+	
+	
+	}
+	
+	parent['container'].form_active = false
+
+	parent.destroy()
+	
+      </handler>
+    </button>
+  </class>
+
+  <class name="valuewidget">
+    <attribute name="datanode" required="true"/>
+    <simplelayout axis="x"/>
+    <edittext name="new_value"/>
+    <button>Ok
+      <handler name="onmousedown">
+	new_value_text = parent.new_value.getText()
+	
+	if ( new_value_text != '' ) {
+
+	new_data_text = new LzDataText(new_value_text)
+	
+	Debug.write(new_data_text)
+
+	new_text_node = new LzDataElement('text')
+	new_text_node.appendChild(new_data_text)
+	
+	new_value_node = new LzDataElement('value')
+	new_value_node.appendChild(new_text_node)
+
+	node_pointer = new LzDatapointer();
+	data_pointer = new LzDatapointer();
+
+	node_pointer.setPointer(new_value_node)
+	data_pointer.setPointer(parent.datanode.p)
+
+	data_pointer.addNodeFromPointer(node_pointer)
+	
+	}
+	parent.destroy()
+      </handler>
+    </button>
+  </class>
+</library>

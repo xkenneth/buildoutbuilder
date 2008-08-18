@@ -98,7 +98,7 @@
       <!-- Buildout Editor -->
       <tabpane name="buildout_editor">Buildout Editor
 	<!-- Buildout Editor -->
-	<buildouteditor datapath="current_buildout:/"/>
+	<buildouteditor id="editor" datapath="current_buildout:/" container="canvas"/>
 	<!-- End Buildout Editor -->
       </tabpane>
     </tabs>

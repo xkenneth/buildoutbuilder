@@ -5,49 +5,39 @@
     <dragstate name="draggable"/>
   </class>
     
-  
-  <class name="editablepart" extends="part">
-    <!-- handlers -->
-    <handler name="onmousedown">
-      Debug.write('Kill Me 2!')
-    </handler>
-    <!-- for every value -->
-    <text>Remove Part
-      <handler name="onclick">
-	parent.datapath.deleteNode()
-      </handler>
-    </text>
-  </class>
-  
   <class name="buildouteditor">
+    <attribute name="container" required="true"/>
     
     <!-- on the y -->
-    <simplelayout axis="y"/>
+    <simplelayout axis="y" spacing="y"/>
 
     <!-- for every part, create a view -->
     <view name="parts_view">
-      <simplelayout axis="y"/>
-      <editablepart name="parts" datapath="part"/>
+      <simplelayout axis="y" spacing="30"/>
+      <part datapath="part" container="${parent.parent.container}"/>
     </view>
 
     <!-- the add part view -->
     <view name="add_part_view">
       
       <!-- along the x -->
-      <simplelayout axis="x"/>
-      <!-- new part interface -->
-      <edittext name="new_part"/>
-      <text fontstyle="bold">Add Part
-	<handler name="onclick">
-	  //get the text
-	  var new_name = parent.new_part.getText()
-	  //if it's not blank
-	  if ( new_name != '' ) {
-	  parent.parent.datapath.addNode('part','',{'name':new_name})
-	  }
-	</handler>
-      </text>
-
+      <simplelayout axis="y"/>
+      <view name="new_part_view">
+	<simplelayout axis="x" spacing="20"/>
+	<!-- new part interface -->
+	<edittext name="new_part"/>
+	<button fontstyle="bold">Add Part
+	  <handler name="onclick">
+	    //get the text
+	    var new_name = parent.new_part.getText()
+	    parent.new_part.setText('')
+	    //if it's not blank
+	    if ( new_name != '' ) {
+	    parent.parent.parent.datapath.addNode('part','',{'name':new_name})
+	    }
+	  </handler>
+	</button>
+      </view>
     </view>
   </class>
 </library>

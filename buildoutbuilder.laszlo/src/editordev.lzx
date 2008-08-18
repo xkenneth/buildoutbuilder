@@ -1,0 +1,63 @@
+<canvas debug="true">
+  <attribute name="currentdraggable"/>
+  <dataset name="buildout">
+    <buildout>
+      <part name="zope">
+	<option name="alink">
+	  <value>
+            <link>
+              <section>this</section>
+              <option>that</option>
+            </link>
+	  </value>
+	</option>
+	<option name="instance">
+	  <value>
+            <text>fg</text>
+	  </value>
+	</option>
+	<option name="eggs">
+	  <value>
+            <link>
+              <section>buildout</section>
+              <option>packages</option>
+            </link>
+            <text>/some/dir</text>
+	  </value>
+	</option>
+	<option name="paths">
+	  <value>
+            <text>/usr/bin</text>
+	  </value>
+	  <value>
+            <text>/usr/local</text>
+	  </value>
+	</option>
+      </part>
+      <part name="buildout">
+	<option name="eggs">
+	  <value>
+            <text>buildoutbuilder</text>
+	  </value>
+	</option>
+	<option name="parts">
+	  <value>
+            <text>zope</text>
+	  </value>
+	  <value>
+            <text>plone</text>
+	  </value>
+	</option>
+	<option name="find-links">
+	  <value>
+            <text>http://pypi.python.org</text>
+	  </value>
+	</option>
+      </part>
+      <part name="plone"/>
+    </buildout>
+  </dataset>
+  <library href="buildouteditor.lzx"/>
+  <buildouteditor id="editor" datapath="buildout:/buildout" container="canvas"/>
+  
+</canvas>

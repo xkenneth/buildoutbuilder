@@ -1,19 +1,8 @@
 <library>
-  <!--Toplevel classes -->
-  <class name="TemporaryDraggable">
-    <dragstate name="draggable"
-	       y="canvas.getMouse('y') - this.height/2"
-	       x="canvas.getMouse('x') - this.width/2"
-	       />
-    <handler name="oninit">
-      this.draggable.apply()
-      canvas.setAttribute('current_draggable',this)
-    </handler>
-    <handler name="onmouseup">
-      this.destroy();
-    </handler>
-  </class>
+  <library href="boilerplate.lzx"/>
+  <library href="tags.lzx"/>
 
+  <!--Toplevel classes -->
   <class name="dragelement">
     <!-- attributes -->
     <attribute name="save_x" type="number"/>
@@ -34,158 +23,130 @@
     </handler>
   </class>
 
-  <!-- buildout elements -->
-  <class name="link">
-    
-    <simplelayout axis="x"/>
-    
-    <text fgcolor="green">${</text>
-    
-    <text fontstyle="bold" fgcolor="red" datapath="section/text()"/>
-  
-    <text fgcolor="green">:</text>
-    
-    <text fontstyle="italic" fgcolor="blue" datapath="option/text()"/>
-    
-    <text fgcolor="green">}</text>
-    
-  </class>
-  
-  <class name="myclass"/>
-  
-  <class name="DraggableLink" extends="TemporaryDraggable" bgcolor="blue">
+  <!-- class option -->
+  <class name="option" extends="removeable">
     <!-- attributes -->
+    <attribute name="container" required="true"/>
     <attribute name="part" type="string"/>
-    <attribute name="option" type="string"/>
-    <attribute name="parentdata"/>
 
-    <!-- handlers -->
-    <handler name="onmouseup">
-      
-      Debug.write(this.parentdata)
-      this.destroy()
-    </handler>
+    <!--handlers-->
 
-    <handler name="ondestroy">
-      Debug.write('Im dieing!')
+    <!--iterate over the links and text -->
 
-      var value_element = new LzDataElement('value')
-      var link_element = new LzDataElement('link')
-      var section_element = new LzDataElement('section')
-      section_element.appendChild( new LzDataText(this.part) )
-      var option_element = new LzDataElement('option')
-      option_element.appendChild( new LzDataText(this.option) )
-      link_element.appendChild(section_element)
-      link_element.appendChild(option_element)
-
-      value_element.appendChild(link_element)
-
-      Debug.write(value_element.serialize())
-      Debug.write(this.parentdata)
-
-      var element_dp = new LzDatapointer()
-      var datapath_dp = new LzDatapointer()
-      element_dp.setPointer(value_element)
-      datapath_dp.setPointer(this.parentdata.p)
-      datapath_dp.addNodeFromPointer(element_dp)
-      
-    </handler>
-    
-    
     <!-- layout -->
     <simplelayout axis="x"/>
-    <text>${</text>
-    <text text="${parent.part}"/>
-    <text>:</text>
-    <text text="${parent.option}"/>
-    <text>}</text>
-    
-  </class>
-    
-
-  <class name="editableoption">
-    <attribute name="part" type="string"/>
-    <!--handlers-->
-    <handler name="onmouseout">
-      if ( canvas.current_draggable != undefined ) {
-      Debug.write('Assigning!')
-      canvas.current_draggable.setAttribute('parentdata',this.datapath)
-      }
-    </handler>
-
-    <handler name="onmousedown">
-      var option = this.datapath.xpathQuery('@name')
-      Debug.write(part)
-      Debug.write(option)
-      var test = new lz.DraggableLink(canvas,{'part':this.part,'option':option})
-    </handler>
-    <!--iterate over the links and text -->
-    <simplelayout axis="x"/>
     <view>
       <simplelayout axis="x"/>
-      <text datapath="@name"/>
+      <text fontsize="12" fontstyle="bold" fgcolor="green" datapath="@name">
+	<handler name="ondblclick">
+	  var option = this.datapath.xpathQuery('@name')
+	  last = this
+	  while (last.datapath == null) {
+	  last = this.parent
+	  }
+
+	  parent.parent.container['currentdraggable'] = new lz.draggablelink(parent.parent.container,{'parentdata':last.datapath,'part':parent.parent.part,'option':option})
+	</handler>
+
+	<handler name="onmousedown">
+	  
+	  if (parent.parent.container['currentdraggable'] != null) {
+
+	  data_pointer = new LzDatapointer();
+	  Debug.write(parent.parent.datapath)
+	  data_pointer.setPointer(parent.parent.datapath.p)
+	  
+	  Debug.write(data_pointer)
+
+	  new_value_element = new LzDataElement('value')
+	  new_value_element.appendChild(parent.parent.container['currentdraggable']['node_element'])
+
+	  if (new_value_element instanceof LzDatapath) {
+	  Debug.write(new_value_element)
+	  data_pointer.addNodeFromPointer(new_value_element)
+	  } else {
+	  element_pointer = new LzDatapointer();
+	  element_pointer.setPointer(new_value_element)
+	  Debug.write(element_pointer)
+	  data_pointer.addNodeFromPointer(element_pointer)
+
+	  }
+      
+	  parent.parent.container['currentdraggable'].destroy()
+	  parent.parent.container['currentdraggable'] = null
+	  
+	  Debug.write('....')
+	  }
+	</handler>
+      </text>
+      <text> = </text>
     </view>
     <view>
       <simplelayout axis="y"/>
-      <view datapath="value">
-	<simplelayout axis="x"/>
-	<link datapath="link"/>
-	<view datapath="text">
-	  <text datapath="text()"/>
-	</view>
+      <!-- every value -->
+      <view>
+	<simplelayout axis="y"/>
+	<value container="${parent.parent.parent.container}">
+	  <datapath xpath="value" pooling="true"/>
+	</value>
+      </view>
+
+      <!-- to add a new value -->
+      <view>
+	<text>+
+	  <handler name="onmousedown">
+	    last = this
+	    while (last.datapath == null) {
+	    last = last.parent
+	    }
+	    //last.datapath.addNode('value')
+	    var new_value_widget = new lz.valuewidget(parent)
+	    new_value_widget.datanode = last.datapath
+	  </handler>
+	</text>
       </view>
     </view>
-    <text>-
-      <handler name="onclick">
-	parent.datapath.deleteNode()
-      </handler>
-    </text>
+    
     
     
   </class>
 
+  <!-- class part -->
   <class name="part">
-    <simplelayout axis="y"/>
-    <text fontstyle="bold" datapath="@name"/>
+    <!-- attributes -->
+    <attribute name="container" required="true"/>
+    <simplelayout axis="y" spacing="10"/>
+    <text fontsize="15" fontstyle="bold" datapath="@name"/>
     <view>
-      <simplelayout axis="y"/>
-      <editableoption datapath="option" part="${parent.parent.datapath.xpathQuery('@name')}"/>
+      <simplelayout axis="y" spacing="10"/>
+      <option datapath="option" part="${parent.parent.datapath.xpathQuery('@name')}" container="${parent.parent.container}"/>
     </view>
     <view name="newOption">
-      <simplelayout axis="x"/>
+      <simplelayout axis="x" spacing="20"/>
       <edittext name="new_option_name"/>
-      <text> = </text>
-      <edittext name="new_option_value"/>
       <button>Add Option
 	<handler name="onclick">
 
 	  new_name = parent.new_option_name.getText()
-	  new_value = parent.new_option_value.getText()
+	  parent.new_option_name.setText('')
 	  
 	  if ( new_name != '' ) {
-	  if ( new_value != '' ) {
 
 	  //if the values are ok
 	  //create the node
-	  var new_text_element = new LzDataElement('text');
-	  new_text_element.appendChild(new LzDataText(new_value));
-	  var new_value_element = new LzDataElement('value');
-	  new_value_element.appendChild(new_text_element);
-	  var new_option_element = new LzDataElement('option',{'name':new_name},new Array(new_value_element));
+	  var new_option_element = new LzDataElement('option',{'name':new_name});
 	  
 	  //create some pointers
 	  var datapath_pointer = new LzDatapointer();
 	  var element_pointer = new LzDatapointer();
 	  
-	  Debug.write(new_option_element)
-
 	  //set the pointers
 	  datapath_pointer.setPointer(this.parent.parent.datapath.p);
 	  element_pointer.setPointer(new_option_element);
 	  
+	  //add the element
 	  datapath_pointer.addNodeFromPointer(element_pointer)
 
-	  }
 	  }
 	  
 	</handler>
