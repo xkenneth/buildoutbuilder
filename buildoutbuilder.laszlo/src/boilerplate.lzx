@@ -1,5 +1,25 @@
 <library>
+  
+  <class name="dragelement">
+    <!-- attributes -->
+    <attribute name="save_x" type="number"/>
+    <attribute name="save_y" type="number"/>
+    <dragstate name="dragging"/>
 
+    <!-- handlers -->
+    <handler name="onmousedown">
+      this.save_x = this.x;
+      this.save_y = this.y;
+      dragging.apply();
+    </handler>
+    
+    <handler name="onmouseup">
+      dragging.remove();
+      this.animate("x",this.save_x,300);
+      this.animate("y",this.save_y,300);
+    </handler>
+  </class>
+  
   <!-- Removeable element -->
   <class name="removeable">
     <text> -
@@ -46,7 +66,6 @@
 
     <!-- layout -->
     <view bgcolor="blue">
-      <link datapath="${this.node_element}"/>
       <text>Hello!</text>
     </view>
   </class>

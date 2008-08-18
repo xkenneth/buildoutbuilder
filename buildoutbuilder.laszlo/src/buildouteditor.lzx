@@ -1,15 +1,12 @@
 <library>
-  <library href="elements.lzx"/>
   
-  <class name="test_class" height="100" width="100">
-    <dragstate name="draggable"/>
-  </class>
-    
+  <library href="tags/part.lzx"/>
+
   <class name="buildouteditor">
     <attribute name="container" required="true"/>
     
     <!-- on the y -->
-    <simplelayout axis="y" spacing="y"/>
+    <simplelayout axis="y" spacing="15"/>
 
     <!-- for every part, create a view -->
     <view name="parts_view">
