@@ -1,0 +1,92 @@
+<library>
+
+  <library href="value.lzx"/>
+  <library href="../boilerplate.lzx"/>
+  
+  <class name="option" extends="removeable">
+    <!-- attributes -->
+    <attribute name="container" required="true"/>
+    <attribute name="part" type="string"/>
+
+    <!--handlers-->
+
+    <!--iterate over the links and text -->
+
+    <!-- layout -->
+    <simplelayout axis="x"/>
+    <view>
+      <simplelayout axis="x"/>
+      <text fontsize="12" fontstyle="bold" fgcolor="green" datapath="@name">
+	<handler name="ondblclick">
+	  var option = this.datapath.xpathQuery('@name')
+	  last = this
+	  while (last.datapath == null) {
+	  last = this.parent
+	  }
+
+	  parent.parent.container['currentdraggable'] = new lz.draggablelink(parent.parent.container,{'parentdata':last.datapath,'part':parent.parent.part,'option':option})
+	</handler>
+
+	<handler name="onmousedown">
+	  
+	  if (parent.parent.container['currentdraggable'] != null) {
+
+	  data_pointer = new LzDatapointer();
+	  Debug.write(parent.parent.datapath)
+	  data_pointer.setPointer(parent.parent.datapath.p)
+	  
+	  Debug.write(data_pointer)
+
+	  new_value_element = new LzDataElement('value')
+	  new_value_element.appendChild(parent.parent.container['currentdraggable']['node_element'])
+
+	  if (new_value_element instanceof LzDatapath) {
+	  Debug.write(new_value_element)
+	  data_pointer.addNodeFromPointer(new_value_element)
+	  } else {
+	  element_pointer = new LzDatapointer();
+	  element_pointer.setPointer(new_value_element)
+	  Debug.write(element_pointer)
+	  data_pointer.addNodeFromPointer(element_pointer)
+
+	  }
+      
+	  parent.parent.container['currentdraggable'].destroy()
+	  parent.parent.container['currentdraggable'] = null
+	  
+	  Debug.write('....')
+	  }
+	</handler>
+      </text>
+      <text> = </text>
+    </view>
+    <view>
+      <simplelayout axis="y"/>
+      <!-- every value -->
+      <view>
+	<simplelayout axis="y"/>
+	<value container="${parent.parent.parent.container}">
+	  <datapath xpath="value" pooling="true"/>
+	</value>
+      </view>
+
+      <!-- to add a new value -->
+      <view>
+	<text>+
+	  <handler name="onmousedown">
+	    last = this
+	    while (last.datapath == null) {
+	    last = last.parent
+	    }
+	    //last.datapath.addNode('value')
+	    var new_value_widget = new lz.valuewidget(parent)
+	    new_value_widget.datanode = last.datapath
+	  </handler>
+	</text>
+      </view>
+    </view>
+    
+    
+    
+  </class>
+</library>

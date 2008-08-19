@@ -3,14 +3,21 @@
   <library href="tags/part.lzx"/>
 
   <class name="buildouteditor">
+    <!-- Attributes -->
     <attribute name="container" required="true"/>
+
+    <!-- Handlers -->
+    <handler name="ondata">
+      Debug.write('!')
+      Debug.write(this.datapath)
+    </handler>
     
     <!-- on the y -->
     <simplelayout axis="y" spacing="15"/>
 
     <!-- for every part, create a view -->
-    <view name="parts_view">
-      <simplelayout axis="y" spacing="30"/>
+    <view name="parts_view" width="800">
+      <wrappinglayout axis="x" spacing="30"/>
       <part datapath="part" container="${parent.parent.container}"/>
     </view>
 

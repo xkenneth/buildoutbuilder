@@ -1,0 +1,53 @@
+<library>	
+
+  <library href="option.lzx"/>
+  <library href="../boilerplate.lzx"/>
+
+  <class name="part" extends="removeable">
+    <simplelayout axis="x"/>
+    <!-- attributes -->
+    <attribute name="container" required="true"/>
+    <view>
+      <simplelayout axis="y" spacing="10"/>
+      <text fontsize="15" fontstyle="bold" datapath="@name"/>
+      <view>
+	<simplelayout axis="y" spacing="10"/>
+	<option datapath="option" part="${parent.parent.parent.datapath.xpathQuery('@name')}" container="${parent.parent.parent.container}"/>
+      </view>
+      <view name="newOption">
+	<simplelayout axis="x" spacing="20"/>
+	<edittext name="new_option_name"/>
+	<button>Add Option
+	  <handler name="onclick">
+
+	    new_name = parent.new_option_name.getText()
+	    parent.new_option_name.setText('')
+	    
+	    if ( new_name != '' ) {
+
+	    //if the values are ok
+	    //create the node
+	    var new_option_element = new LzDataElement('option',{'name':new_name});
+	    
+	    //create some pointers
+	    var datapath_pointer = new LzDatapointer();
+	    var element_pointer = new LzDatapointer();
+	    
+	    //set the pointers
+	    datapath_pointer.setPointer(this.parent.parent.parent.datapath.p);
+	    element_pointer.setPointer(new_option_element);
+	    
+	    //add the element
+	    Debug.write(element_pointer)
+	    Debug.write(datapath_pointer)
+	    datapath_pointer.addNodeFromPointer(element_pointer)
+
+	    }
+	    
+	  </handler>
+	</button>
+      </view>
+    </view>
+
+  </class>
+</library>

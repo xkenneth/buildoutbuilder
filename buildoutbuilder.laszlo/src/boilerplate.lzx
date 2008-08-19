@@ -1,5 +1,5 @@
 <library>
-  
+
   <class name="dragelement">
     <!-- attributes -->
     <attribute name="save_x" type="number"/>
@@ -64,9 +64,14 @@
       this.draggable.apply()
     </handler>
 
+    <handler name="ondata">
+      Debug.write(this.datapath)
+    </handler>
+
     <!-- layout -->
     <view bgcolor="blue">
-      <text>Hello!</text>
+      <simplelayout axis="x"/>
+      <text>Drop Me</text>
     </view>
   </class>
 

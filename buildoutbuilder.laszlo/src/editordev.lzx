@@ -57,7 +57,61 @@
       <part name="plone"/>
     </buildout>
   </dataset>
+
+  <dataset name="recipes">
+      <node name="recipes">
+	<node name="squid">
+	  <node name="squid" isleaf="true">
+            <recipe>
+              <part name="squid">
+		<option name="squid_accelerated_hosts">
+		  <value>
+                    <text>www.mysite.org:</text>
+		  </value>
+		  <value>
+                    <text>127.0.0.1:8080/mysite</text>
+		  </value>
+		</option>
+		<option name="recipe">
+		  <value>
+                    <text>iw.recipe.squid</text>
+		  </value>
+		</option>
+              </part>
+            </recipe>
+	  </node>
+	  <node name="squid" isleaf="true">
+            <recipe>
+              <part name="squid">
+		<option name="squid_accelerated_hosts">
+		  <value>
+                    <text>www.mysite.org:</text>
+		  </value>
+		  <value>
+                    <text>127.0.0.1:8080/mysite</text>
+		  </value>
+		</option>
+		<option name="recipe">
+		  <value>
+                    <text>iw.recipe.squid</text>
+		  </value>
+		</option>
+              </part>
+            </recipe>
+	  </node>
+	</node>
+      </node>
+  </dataset>
+
+
   <library href="buildouteditor.lzx"/>
-  <buildouteditor id="editor" datapath="buildout:/buildout" container="canvas"/>
+  <library href="recipes.lzx"/>
+  <include href="xmlrpc.lzx"/>
+  <simplelayout axis="x"/>
+  <view width="600">
+    <buildouteditor id="editor" datapath="buildout:/buildout" container="canvas"/>
+  </view>
+  <datapointer id="part_dp" xpath="buildout:/buildout"/>
+  <recipes datapath="recipes:/node" remote="${backend}" container="canvas" parts="${part_dp}"/>
   
 </canvas>

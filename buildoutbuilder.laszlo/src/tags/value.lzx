@@ -1,0 +1,49 @@
+<library>
+
+  <library href="../boilerplate.lzx"/>
+  <library href="link.lzx"/>
+  <library href="../widgets.lzx"/>
+  
+  <class name="optiontext" extends="dragnode">
+    <simplelayout axis="x"/>
+    <text datapath="text()"/>
+  </class>
+  
+  <class name="value">
+
+    <attribute name="container" required="true"/>
+    <attribute name="form_active" type="boolean"/>
+
+    <simplelayout axis="x"/>
+    
+    <view>
+      <simplelayout axis="x"/>
+      <view>
+	<datapath xpath="*" pooling="true"/>
+	<link container="${parent.parent.parent.container}"/>
+	<optiontext container="${parent.parent.parent.container}"/>
+      </view>
+    </view>
+    
+    <text>+
+      <handler name="onmousedown">
+	last = this
+	while (last.datapath == null) {
+	last = last.parent
+	}
+	
+	if (parent['form_active'] == false || parent['form_active'] == undefined) {
+	
+	var new_value_widget = new lz.subvaluewidget(parent,{'container':parent})
+	parent.form_active = true
+	//new_value_widget.setAttribute('datanode',last.datapath) 
+	new_value_widget.datanode = last.datapath
+
+	}
+	
+      </handler>
+    </text>
+
+  </class>
+
+</library>
