@@ -1,0 +1,22 @@
+<library>
+  <class name="recipetree">
+    <handler name="ondata">
+      Debug.write('??')
+      Debug.write(this.datapath)
+    </handler>
+    <attribute name="container" required="true"/>
+    <attribute name="remote"/>
+    <attribute name="parts"/>
+
+    <simplelayout axis="y"/>
+
+    <tree text="Recipes" width="${parent.width}" height="${parent.height*0.8}" datapath="/">
+      <tree datapath="*"
+	    text="$path{'@name'}"
+	    isleaf="$path{'@isleaf'}"
+	    >
+      </tree>
+    </tree>
+    
+  </class>
+</library>

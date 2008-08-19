@@ -1,0 +1,23 @@
+<library>
+  <library href="../boilerplate.lzx"/>
+  <class name="link" extends="dragnode">
+    <!-- along the x -->
+    <simplelayout axis="x"/>
+    
+    <view datapath="section">
+      <simplelayout axis="x"/>
+      <text fgcolor="green">${</text>
+      
+      <text fontstyle="bold" fgcolor="red" datapath="text()"/>
+      
+      <text fgcolor="green">:</text>
+    </view>
+    <view datapath="option">
+      <simplelayout axis="x"/>
+      <text fontstyle="italic" fgcolor="blue" datapath="text()"/>
+      
+      <text fgcolor="green">}</text>
+    </view>
+    
+  </class>
+</library>

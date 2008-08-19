@@ -1,0 +1,47 @@
+<library>
+  
+  <library href="tags/part.lzx"/>
+
+  <class name="buildouteditor">
+    <!-- Attributes -->
+    <attribute name="container" required="true"/>
+
+    <!-- Handlers -->
+    <handler name="ondata">
+      Debug.write('!')
+      Debug.write(this.datapath)
+    </handler>
+    
+    <!-- on the y -->
+    <simplelayout axis="y" spacing="15"/>
+
+    <!-- for every part, create a view -->
+    <view name="parts_view" width="800">
+      <wrappinglayout axis="x" spacing="30"/>
+      <part datapath="part" container="${parent.parent.container}"/>
+    </view>
+
+    <!-- the add part view -->
+    <view name="add_part_view">
+      
+      <!-- along the x -->
+      <simplelayout axis="y"/>
+      <view name="new_part_view">
+	<simplelayout axis="x" spacing="20"/>
+	<!-- new part interface -->
+	<edittext name="new_part"/>
+	<button fontstyle="bold">Add Part
+	  <handler name="onclick">
+	    //get the text
+	    var new_name = parent.new_part.getText()
+	    parent.new_part.setText('')
+	    //if it's not blank
+	    if ( new_name != '' ) {
+	    parent.parent.parent.datapath.addNode('part','',{'name':new_name})
+	    }
+	  </handler>
+	</button>
+      </view>
+    </view>
+  </class>
+</library>

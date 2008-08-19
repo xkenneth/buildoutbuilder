@@ -1,0 +1,117 @@
+<canvas debug="true">
+  <attribute name="currentdraggable"/>
+  <dataset name="buildout">
+    <buildout>
+      <part name="zope">
+	<option name="alink">
+	  <value>
+            <link>
+              <section>this</section>
+              <option>that</option>
+            </link>
+	  </value>
+	</option>
+	<option name="instance">
+	  <value>
+            <text>fg</text>
+	  </value>
+	</option>
+	<option name="eggs">
+	  <value>
+            <link>
+              <section>buildout</section>
+              <option>packages</option>
+            </link>
+            <text>/some/dir</text>
+	  </value>
+	</option>
+	<option name="paths">
+	  <value>
+            <text>/usr/bin</text>
+	  </value>
+	  <value>
+            <text>/usr/local</text>
+	  </value>
+	</option>
+      </part>
+      <part name="buildout">
+	<option name="eggs">
+	  <value>
+            <text>buildoutbuilder</text>
+	  </value>
+	</option>
+	<option name="parts">
+	  <value>
+            <text>zope</text>
+	  </value>
+	  <value>
+            <text>plone</text>
+	  </value>
+	</option>
+	<option name="find-links">
+	  <value>
+            <text>http://pypi.python.org</text>
+	  </value>
+	</option>
+      </part>
+      <part name="plone"/>
+    </buildout>
+  </dataset>
+
+  <dataset name="recipes">
+      <node name="recipes">
+	<node name="squid">
+	  <node name="squid" isleaf="true">
+            <recipe>
+              <part name="squid">
+		<option name="squid_accelerated_hosts">
+		  <value>
+                    <text>www.mysite.org:</text>
+		  </value>
+		  <value>
+                    <text>127.0.0.1:8080/mysite</text>
+		  </value>
+		</option>
+		<option name="recipe">
+		  <value>
+                    <text>iw.recipe.squid</text>
+		  </value>
+		</option>
+              </part>
+            </recipe>
+	  </node>
+	  <node name="squid" isleaf="true">
+            <recipe>
+              <part name="squid">
+		<option name="squid_accelerated_hosts">
+		  <value>
+                    <text>www.mysite.org:</text>
+		  </value>
+		  <value>
+                    <text>127.0.0.1:8080/mysite</text>
+		  </value>
+		</option>
+		<option name="recipe">
+		  <value>
+                    <text>iw.recipe.squid</text>
+		  </value>
+		</option>
+              </part>
+            </recipe>
+	  </node>
+	</node>
+      </node>
+  </dataset>
+
+
+  <library href="buildouteditor.lzx"/>
+  <library href="recipes.lzx"/>
+  <include href="xmlrpc.lzx"/>
+  <simplelayout axis="x"/>
+  <view width="600">
+    <buildouteditor id="editor" datapath="buildout:/buildout" container="canvas"/>
+  </view>
+  <datapointer id="part_dp" xpath="buildout:/buildout"/>
+  <recipes datapath="recipes:/node" remote="${backend}" container="canvas" parts="${part_dp}"/>
+  
+</canvas>

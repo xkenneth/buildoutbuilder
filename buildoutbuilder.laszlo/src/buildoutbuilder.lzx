@@ -1,72 +1,61 @@
 <canvas debug="true">
+  <splash/>
   <!-- Imports -->
-  <library href="elements.lzx"/>
+  <library href="buildouteditor.lzx"/>
 
   <!-- Current Buildout DataSet -->
   <dataset name="current_buildout">
     <buildout>
-      <part>
-	<name>buildout</name>
+      <part name="buildout">
+	<option name="parts"/>
       </part>
     </buildout>
   </dataset>
 
-  <!-- Available Buildouts DataSet -->
+  <!-- Dataset for generating the buildout viewer -->
+  <dataset name="buildout_viewer">
+  </dataset>
+
+  <dataset name="partrecipes" request="true" src="http://192.168.34.129:8081/BuildoutBuilder/recipes" type="http"/>
+
+  <dataset name="rendered_buildout">
+    <text>
+      Not Yet Rendered
+    </text>
+  </dataset>
+    
+
   <!-- The last loaded dataset must call the completeInstantation() for the main view -->
-  <dataset name="available_buildouts" request="true" src="http://localhost:8081/BuildoutBuilder/buildouts">
+  <dataset name="available_buildouts" request="true" src="http://192.168.34.129:8081/BuildoutBuilder/buildouts">
     <handler name="ondata">
-      Debug.write("Comleting Instantiation");
       canvas.main_view.completeInstantiation();
-      Debug.write("Instantiation Complete");
     </handler>
   </dataset>
 
-  <!-- Dataset for generating the buildout viewer -->
-  <dataset name="buildout_viewer"/>
-
   <!-- XML-RPC -->
-  <xmlrpc name="backend" service="http://localhost:8081/BuildoutBuilder">
-    <remotecall name="buildout_dom" funcname="buildout_dom"> 
-      <handler name="ondata" args="value">
-	new_data = LzDataElement.stringToLzData(value);
-	
-	if (bov_dp.p.hasChildNodes())
-	{
-	do {
-	    bov_dp.p.removeChild(bov_dp.p.getFirstChild());
-	    } while (bov_dp.p.hasChildNodes());
-	}
-	
-	bov_dp.p.appendChild(new_data);
-
-	buildout_viewer.updateData();
-
-      </handler>
-    </remotecall>
-    
-    <remotecall name="test" funcname="test"/>
-    
-  </xmlrpc>
+  <include href="xmlrpc.lzx"/>
 
   <!-- DATA POINTERS -->
   <datapointer id="bov_dp" xpath="buildout_viewer:/"/>
 
+  <datapointer id="parts_dp" xpath="current_buildout:/buildout"/>
+
   <!-- Buildout DataPointer -->
   <datapointer id="buildout_dp" xpath="current_buildout:/buildout"/>
-
-  <!-- Part DataPointer -->
-  <datapointer id="part_dp" xpath="current_buildout:/buildout/buildout"/>
-
 
   <!-- Main View -->
   <view name="main_view" initstage="defer">
     <simplelayout axis="y"/>
     <!-- Tabs -->
-    <tabs name="main_tabs" width="${canvas.width*0.90}" x="${canvas.width/2.0*0.1}" height="${canvas.height}">
+    <tabs name="main_tabs" height="550">
 
       <!-- Home View -->
       <tabpane name="home">Home
-	<text>Nothing on this page! Go to the Buildout Viewer!</text>
+	<simplelayout axis="y" spacing="10"/>
+	<text fontsize="20" fontstyle="bold">Buildout Builder</text>
+	<text>It's finally up and running!</text>
+	<text>I'm not going to post any instructions as I hope this ends up being rather intuitive. </text>
+	<text>Please direct any feedback to xkenneth@gmail.com</text>
       </tabpane>
 
       <!-- Buildout View -->
@@ -74,12 +63,15 @@
 	
 	<!-- Buildouts Tree -->
 	<simplelayout axis="x"/>
-	<view width="${parent.width*0.18}">
+	<view width="200" height="500" clip="true">
 	  <simplelayout axis="y"/>
 	  <text>Available Buildouts</text>
+	  
 	  <tree id="buildout_tree" width="${parent.width}" height="${parent.height*0.8}" datapath="available_buildouts:/Buildouts">
 	    <tree datapath="*" text="$path{'@name'}" isleaf="$path{'@file'}">
+	      
 	      <handler name="onactivate">
+		if ( this['isleaf'] ) {
 		last = this;
 		my_text = '';
 		first = true;
@@ -96,6 +88,8 @@
 		
 		backend.buildout_dom.invoke([my_text])
 		
+		}
+		
 	      </handler>
 	      <handler name="onvisible">
 		this.updateData()
@@ -103,16 +97,35 @@
 	      
 	    </tree>
 	  </tree>
+	  <button>Load
+	    <handler name="onmousedown">
+		var t = new LzDatapointer()
+		var s = new LzDatapointer()
+		t.setPointer(current_buildout)
+		s.setPointer(buildout_viewer)
+		
+		t.selectChild()
+		s.selectChild()
+		
+		t.deleteNode()
+		t.setPointer(current_buildout)
+		
+		
+		t.addNodeFromPointer(s)
+		
+	      </handler>
+	  </button>
 	  <!-- End Buildouts Tree -->
 	</view>
-
-	<view width="${parent.width*.78}" height="${parent.height*0.9}">
-	  
-	  
-	  
-	  <!-- Buildout Viewer -->
-	  <include href="buildoutviewer.lzx"/>
-	  <!-- End Buildout Viewer -->
+	
+	<view>
+	  <view width="800" height="500" clip="true">
+	    <!-- Buildout Viewer -->
+	    <simplelayout axis="x"/>
+	    <include href="buildoutviewer.lzx"/>
+	    <!-- End Buildout Viewer -->
+	    <scrollbar axis="y"/>
+	  </view>
 	  
 	</view>
 	
@@ -120,7 +133,71 @@
       
       <!-- Buildout Editor -->
       <tabpane name="buildout_editor">Buildout Editor
-	<text>Nothing on this page! Go to the Buildout Viewer!</text>
+	<!-- Buildout Editor -->
+	<simplelayout axis="x"/>
+	<view>
+	  <view>
+	    <simplelayout axis="y"/>
+	    <tabs>
+	      <tabpane>Editor
+		<simplelayout axis="x"/>
+		<view height="400" clip="true">
+		  <buildouteditor id="editor" datapath="current_buildout:/buildout" container="canvas"/>
+		  <scrollbar axis="y"/>
+		</view>
+		<view width="200">
+		  <simplelayout axis="x"/>
+		  <tree datapath="partrecipes:/" icon="null" showroot="false">
+		    <tree datapath="*" icon="null" text="$path{'@name'}" isleaf="$path{'@recipe'}">
+		      <handler name="onactivate">
+			
+			last = this
+			if ( this['isleaf'] ) {
+			
+			var dp = new LzDatapointer()
+			
+			
+			dp.setPointer(this.datapath.p)
+			
+			dp.selectChild()
+			
+			if ( dp.selectChild() ) {
+			
+			parts_dp.addNodeFromPointer(dp);
+			
+			while( dp.selectNext() ) {
+			
+			last.parts.addNodeFromPointer(dp);
+			
+			}
+			
+			
+			}
+			
+			}
+			
+		      </handler>
+		    </tree>
+		  </tree>
+		</view>
+	      </tabpane>
+	      <tabpane>Rendered
+		<view height="400" clip="true">
+		  <text multiline="true" width="800" selectable="true" datapath="rendered_buildout:/text/text()"/>
+		  <scrollbar axis="y"/>
+		</view>
+	      </tabpane>
+	    </tabs>
+	    <button>Render
+	      <handler name="onmousedown">
+		backend.render.invoke([current_buildout.serialize()])
+	      </handler>
+	    </button>
+	  </view>
+	</view>
+
+	
+	<!-- End Buildout Editor -->
       </tabpane>
     </tabs>
     <text>Kenneth Miller for GSOC 2008</text>

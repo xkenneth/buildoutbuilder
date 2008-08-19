@@ -1,5 +1,5 @@
 <!-- Top Level View -->
-<view clip="true" height="${parent.height*0.9}" width="${parent.width}">
+<view>
   <!-- Layout out scrollbar and buildout area -->
   <simplelayout axis="x"/>
   
@@ -30,8 +30,25 @@
 	    <view>
 	      <simplelayout axis="y"/>
 	      <view datapath="value">
-		<link datapath="link"/>
-		<text datapath="text()"/>
+		<simplelayout axis="y"/>
+		<view datapath="*">
+		  <simplelayout axis="x"/>
+		  <text datapath="text()"/>
+		  <view>
+		    <simplelayout axis="x"/>
+		    <view datapath="section">
+		      <simplelayout axis="x"/>
+		      <text fgcolor="green">${</text>
+		      <text fgcolor="red" datapath="text()"/>
+		      <text fgcolor="green">:</text>
+		    </view>
+		    <view datapath="option">
+		      <simplelayout axis="x"/>
+		      <text fgcolor="blue" datapath="text()"/>
+		      <text fgcolor="green">}</text>
+		    </view>
+		  </view>
+		</view>
 	      </view>
 	    </view>
 	  </view>
@@ -40,5 +57,4 @@
       </view>
     </view>
   </view>
-  <scrollbar/>
 </view>

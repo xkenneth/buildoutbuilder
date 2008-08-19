@@ -1,0 +1,192 @@
+<library>
+
+  <class name="dragelement">
+    <!-- attributes -->
+    <attribute name="save_x" type="number"/>
+    <attribute name="save_y" type="number"/>
+    <dragstate name="dragging"/>
+
+    <!-- handlers -->
+    <handler name="onmousedown">
+      this.save_x = this.x;
+      this.save_y = this.y;
+      dragging.apply();
+    </handler>
+    
+    <handler name="onmouseup">
+      dragging.remove();
+      this.animate("x",this.save_x,300);
+      this.animate("y",this.save_y,300);
+    </handler>
+  </class>
+  
+  <!-- Removeable element -->
+  <class name="removeable">
+    <text> -
+      <handler name="onmousedown">
+	last = this
+	while (last.datapath == null) {
+	last = last.parent
+	}
+	
+	//setup a new pointer
+	dp = new LzDatapointer();
+	//set it to the datapath
+	dp.setPointer(last.datapath.p)
+	//get it's parent
+	dp.selectParent()
+	//delete the node of interest
+	last.datapath.deleteNode()
+	if ( dp.getNodeCount() == 0 ) { 
+	Debug.write('empty')
+	dp.deleteNode() 
+	}
+
+      </handler>
+    </text>
+  </class>
+
+  <!-- Draggable elements -->
+  <class name="temporarydraggable">
+    <!-- attributes -->
+    <!-- to hold the datapath -->
+    <attribute name="target_dataset"/>
+    <attribute name="node_element"/>
+
+    <!-- methods -->
+    <!-- x,y settings allow the object to be centered on the mouse -->
+    <dragstate name="draggable"
+	       y="canvas.getMouse('y') - this.height"
+	       x="canvas.getMouse('x') - this.width"
+	       />
+    <handler name="oninit">
+      //make the node draggable
+      this.draggable.apply()
+    </handler>
+
+    <handler name="ondata">
+      Debug.write(this.datapath)
+    </handler>
+
+    <!-- layout -->
+    <view bgcolor="blue">
+      <simplelayout axis="x"/>
+      <text>Drop Me</text>
+    </view>
+  </class>
+
+  <!-- Draggable Container -->
+  <class name="dragnode" extends="removeable">
+    <!-- attributes -->
+    <attribute name="container" required="true"/>
+    <!-- handlers -->
+    <handler name="ondblclick">
+      last = this
+      while (last['datapath'] == null) {
+      last = last.parent
+      }
+      this.container['currentdraggable'] = new lz.temporarydraggable(this.container,{'node_element':last.datapath})
+    </handler>
+    
+    <handler name="onclick">
+      
+      last = this
+      while (last.datapath == null) {
+      last = this.parent
+      }
+
+      if (this.container['currentdraggable'] != null) {
+      
+      
+      data_pointer = new LzDatapointer();
+      
+      data_pointer.setPointer(last.datapath.p)
+      data_pointer.selectParent()
+
+      
+      Debug.write('What?')
+      Debug.write(this.container['currentdraggable']['node_element'])
+      
+      if (this.container['currentdraggable']['node_element'] instanceof LzDatapath) {
+      Debug.write('Here')
+      data_pointer.addNodeFromPointer(this.container['currentdraggable']['node_element'])
+      } else {
+      element_pointer = new LzDatapointer();
+      element_pointer.setPointer(this.container['currentdraggable']['node_element'])
+      data_pointer.addNodeFromPointer(element_pointer)
+
+      //data_pointer.addNodeFromPointer(this.container['currentdraggable']['node_element'])
+      //Debug.write(data_pointer)
+      }
+      
+      this.container['currentdraggable'].destroy()
+      this.container['currentdraggable'] = null
+      
+      }
+
+    </handler>
+    
+    <handler name="onmouseover">
+      this.setAttribute('bgcolor',red)
+    </handler>
+
+    <handler name="onmouseout">
+      this.setAttribute('bgcolor',null)
+    </handler>
+    
+  </class>
+
+  <class name="draggablelink" bgcolor="blue">
+    <!-- attributes -->
+    <attribute name="part" type="string"/>
+    <attribute name="option" type="string"/>
+
+    <!-- dragstate -->
+    <dragstate name="draggable"
+	       y="canvas.getMouse('y') + 10"
+	       x="canvas.getMouse('x') + 10"
+	       />
+
+    <!-- handlers -->
+    
+    <handler name="oninit">
+      //make the node draggable
+      this.draggable.apply()
+
+      var value_element = new LzDataElement('value')
+      var link_element = new LzDataElement('link')
+      var section_element = new LzDataElement('section')
+      section_element.appendChild( new LzDataText(this.part) )
+      var option_element = new LzDataElement('option')
+      option_element.appendChild( new LzDataText(this.option) )
+      link_element.appendChild(section_element)
+      link_element.appendChild(option_element)
+
+      value_element.appendChild(link_element)
+      
+      this.node_element = link_element
+    </handler>
+
+    <handler name="onmouseup">
+      
+
+      var element_dp = new LzDatapointer()
+      var datapath_dp = new LzDatapointer()
+      element_dp.setPointer(value_element)
+      datapath_dp.setPointer(this.parentdata.p)
+      datapath_dp.addNodeFromPointer(element_dp)
+
+      this.destroy()
+    </handler>
+
+    <!-- layout -->
+    <simplelayout axis="x"/>
+    <text>${</text>
+    <text text="${parent.part}"/>
+    <text>:</text>
+    <text text="${parent.option}"/>
+    <text>}</text>
+    
+  </class>
+
+</library>

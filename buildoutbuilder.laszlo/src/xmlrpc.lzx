@@ -1,0 +1,44 @@
+<xmlrpc name="backend" id="backend" service="http://192.168.34.129:8081/BuildoutBuilder">
+  <remotecall name="buildout_dom" funcname="buildout_dom">
+    <handler name="ondata" args="value">
+      new_data = LzDataElement.stringToLzData(value);
+      
+      if (bov_dp.p.hasChildNodes())
+      {
+      do {
+      bov_dp.p.removeChild(bov_dp.p.getFirstChild());
+      } while (bov_dp.p.hasChildNodes());
+      }
+      
+      bov_dp.p.appendChild(new_data);
+
+      buildout_viewer.updateData();
+
+    </handler>
+  </remotecall>
+  
+  <remotecall name="render" funcname="render">
+    <handler name="ondata" args="value">
+      new_data = LzDataElement.stringToLzData(value);
+      render_dp = new LzDatapointer();
+      render_dp.setPointer(rendered_buildout)
+      
+      if (render_dp.p.hasChildNodes())
+      {
+      do {
+      render_dp.p.removeChild(render_dp.p.getFirstChild());
+      } while (render_dp.p.hasChildNodes());
+      }
+      
+      render_dp.p.appendChild(new_data);
+
+      rendered_buildout.updateData();
+    </handler>
+  </remotecall>
+      
+      
+  
+
+  <remotecall name="test" funcname="test"/>
+</xmlrpc>
+  
