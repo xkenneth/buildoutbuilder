@@ -43,8 +43,8 @@ def render(dom):
             
     
 
-    cp.set('buildout','parts',render_list(parts,delim="\n"))
-
+    if cp.has_section('buildout'):
+        cp.set('buildout','parts',render_list(parts,delim="\n"))
 
     return cp
 

@@ -10,7 +10,10 @@ from lxml import etree
 
 ### BB ###
 from buildoutbuilder.dom.generate import generate
-from buildoutbuilder.dom.render import render
+from buildoutbuilder.dom.render import render, to_string
+
+### APP ###
+from recipes import retrieve_recipes
 
 ### ZOPE ###
 from zope.component import getMultiAdapter
@@ -19,6 +22,7 @@ from zope.schema import TextLine
 
 ### CONSTANTS ###
 BUILDOUTS_FOLDER = 'buildouts'
+RECIPES_FOLDER = 'recipes'
 
 ### RES ###
 buildout_re = re.compile('.*.cfg$')
@@ -66,10 +70,33 @@ class BuildoutbuilderXMLRPC(grok.XMLRPC):
 
         return False
 
+    def render(self,dom):
+        print dom
+        dom = etree.fromstring(dom)
+        print etree.tostring(dom)
+        dom = dom[0]
+        val = to_string(render(dom))
+        print val
+        new_dom = etree.Element('text')
+        new_dom.text = val
+        return etree.tostring(new_dom)
+
     def test(self):
         return True
 
 ### VIEWS ###
+        
+
+class Recipes(grok.View):
+    def render(self):
+        self.response.setHeader('Content-Type', 'text/xml')
+        dom = etree.Element('recipes')
+        
+        recipes_dir = self.static.get(RECIPES_FOLDER).context.path
+        
+        return etree.tostring(retrieve_recipes(recipes_dir),pretty_print=True)
+        
+            
         
 
 class Buildouts(grok.View):
@@ -77,7 +104,7 @@ class Buildouts(grok.View):
     def render(self):
         #updating the current buildout view uid
         self.response.setHeader('Content-Type', 'text/xml')
-
+        
         dom = etree.Element('Buildouts')
         dom.set('name','Buildouts')
 
@@ -98,6 +125,10 @@ class Buildouts(grok.View):
                         if buildout_re.match(f.name) is not None:
                             try:
                                 buildout_dom = generate(tar.extractfile(f).read())
+                                cp = render(buildout_dom)
+                                if not cp.has_section('buildout'):
+                                    raise ValueError('No Section: Buildout')
+                                
                                 buildout_files.append({'tar':tar,
                                                        'directory':'t',
                                                        'file':f.name,

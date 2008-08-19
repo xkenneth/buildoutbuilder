@@ -1,0 +1,1 @@
+<recipe><part name="squid"><option name="squid_accelerated_hosts"><value><text>www.mysite.org:</text></value><value><text>127.0.0.1:8080/mysite</text></value></option><option name="recipe"><value><text>iw.recipe.squid</text></value></option></part></recipe>

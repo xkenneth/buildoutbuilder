@@ -1,5 +1,6 @@
 import re
 import StringIO
+import os
 
 from lxml import etree
 
@@ -23,9 +24,12 @@ def generate(uri):
         cp = uri
         
     if isinstance(uri,str):
-        uri = StringIO.StringIO(uri)
         cp = ConfigParser.ConfigParser()
-        cp.readfp(uri)
+        if (os.path.isfile(uri)):
+            cp.read(uri)
+        else:
+            uri = StringIO.StringIO(uri)
+            cp.readfp(uri)
 
         
     #if not already defined
@@ -35,11 +39,14 @@ def generate(uri):
         cp = ConfigParser.ConfigParser()
         cp.read(uri)
 
-        
-    if not cp.has_section( 'buildout' ):
-        raise ValueError( 'Buildout does not have a buildout section' )
+    #if not cp.has_section( 'buildout' ):
+    #    raise ValueError( 'Buildout does not have a buildout section' )
     
-    dom = etree.Element( "buildout" )
+    tag_name = 'buildout'
+    if not cp.has_section( 'buildout' ):
+        tag_name = 'recipe'
+
+    dom = etree.Element( tag_name )
 
     #get the sections from the configParser
     sections = cp._sections.keys()
